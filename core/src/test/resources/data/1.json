@@ -1,0 +1,5 @@
+{
+  "verb": "post",
+  "actor": "urn:example:person:joe",
+  "object": "http://example.org/posts/1"
+}
