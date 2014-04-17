@@ -30,6 +30,12 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
+/**
+ * A GeoJSON MultiPolygon object.
+ * see http://geojson.org/geojson-spec.html#multipolygon
+ * @author james
+ *
+ */
 public final class MultiPolygon 
   extends CoordinateGeometry<MultiPolygon, Polygon, Iterable<Polygon>>{
 
@@ -43,6 +49,12 @@ public final class MultiPolygon
       type(Type.MULTIPOLYGON);
     }
     
+    /**
+     * Add one or more Polygons
+     * @param poly Polygon
+     * @param polys Polygon[] optional vararg
+     * @return Builder
+     */
     public Builder add(Polygon poly, Polygon... polys) {
       // TODO: Check hole requirement
       this.strings.add(poly);
@@ -52,10 +64,20 @@ public final class MultiPolygon
       return this;
     }
     
+    /**
+     * Add a Polygon
+     * @param poly Supplier&lt;Polygon>
+     * @return Builder
+     */
     public Builder add(Supplier<Polygon> poly) {
       return add(poly.get());
     }
     
+    /**
+     * Add one ore more Polygons
+     * @param polygons Iterable&lt;Polygon>
+     * @return Builder
+     */
     public Builder add(Iterable<Polygon> polygons) {
       this.strings.addAll(polygons);
       return this;
@@ -82,6 +104,10 @@ public final class MultiPolygon
     return coordinates().iterator();
   }
 
+  /**
+   * Return a copy of this object with a calculated bounding box
+   * @return MultiPolygon
+   */
   @Override
   protected MultiPolygon makeWithBoundingBox() {
     return new MultiPolygon.Builder()

@@ -30,6 +30,12 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
+/**
+ * A GeoJSON MultiLineString object
+ * see http://geojson.org/geojson-spec.html#multilinestring
+ * @author james
+ *
+ */
 public final class MultiLineString 
   extends CoordinateGeometry<MultiLineString,LineString,Iterable<LineString>> {
 
@@ -43,6 +49,12 @@ public final class MultiLineString
       type(Type.MULTILINESTRING);
     }
     
+    /**
+     * Add one or more LineStrings
+     * @param line LineString
+     * @param lines LineString[] optional vararg
+     * @return Builder
+     */
     public Builder add(LineString line, LineString... lines) {
       this.strings.add(line);
       if (lines != null)
@@ -51,10 +63,20 @@ public final class MultiLineString
       return this;
     }
     
+    /**
+     * Add a single LineString
+     * @param line Supplier&lt;LineString>
+     * @return Builder
+     */
     public Builder add(Supplier<LineString> line) {
       return add(line.get());
     }
     
+    /**
+     * Add one or more LineStrings
+     * @param lines Iterable&lt;LineString>
+     * @return Builder
+     */
     public Builder add(Iterable<LineString> lines) {
       this.strings.addAll(lines);
       return this;
@@ -64,6 +86,10 @@ public final class MultiLineString
       return new MultiLineString(this);
     }
 
+    /**
+     * Get this objects collection of LineStrings
+     * @return Iterable&lt;LineString>
+     */
     @Override
     protected Iterable<LineString> coordinates() {
       return strings.build();
@@ -81,6 +107,10 @@ public final class MultiLineString
     return coordinates().iterator();
   }
 
+  /** 
+   * Copy this object with a calculated bounding box
+   * @return MultiLineString
+   */
   @Override
   protected MultiLineString makeWithBoundingBox() {
     return new MultiLineString.Builder()

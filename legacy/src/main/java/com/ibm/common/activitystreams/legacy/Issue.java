@@ -26,6 +26,11 @@ import java.io.ObjectStreamException;
 import com.google.common.collect.ImmutableList;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * The legacy "issue" objectType.
+ * @author james
+ *
+ */
 public class Issue
   extends ASObject {
 
@@ -36,6 +41,12 @@ public class Issue
       objectType("issue");
     }
     
+    /**
+     * Set the "types" property
+     * @param type String
+     * @param types String... optional vararg of additional types to set
+     * @return Builder
+     */
     public Builder types(String type, String... types) {
       ImmutableList.Builder<String> list = 
         ImmutableList.builder();
@@ -46,10 +57,18 @@ public class Issue
       return types(list.build());
     }
     
+    /**
+     * Set the "types" property
+     * @param types Iterable&lt;String>
+     * @return Builder
+     */
     public Builder types(Iterable<String> types) {
       return set("types", types);
     }
     
+    /**
+     * Get the built Issue object
+     */
     public Issue get() {
       return new Issue(this);
     }
@@ -60,9 +79,15 @@ public class Issue
     super(builder);
   }
   
+  /**
+   * Get the listing of types
+   * @return Iterable&lt;String>
+   */
   public Iterable<String> types() {
     return this.<Iterable<String>>get("types");
   }
+  
+  // Java Serialization Support `
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

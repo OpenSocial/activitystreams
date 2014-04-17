@@ -27,19 +27,40 @@ import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 import com.ibm.common.activitystreams.Collection;
 
+/**
+ * For the legacy "role", "group" and "team" objectTypes.
+ * Membership objects include an additional "members" 
+ * collection property.
+ * 
+ * @author james
+ *
+ */
 public class Membership extends ASObject {
 
   public static final class Builder 
     extends ASObject.AbstractBuilder<Membership, Builder> {
 
+    /**
+     * Set the members collection
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder members(Collection collection) {
       return set("members", collection);
     }
     
+    /**
+     * Set the members collection
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder members(Supplier<? extends Collection> collection) {
       return members(collection.get());
     }
     
+    /**
+     * Get the built Membership object
+     */
     public Membership get() {
       return new Membership(this);
     }
@@ -50,9 +71,15 @@ public class Membership extends ASObject {
     super(builder);
   }
   
+  /**
+   * Return the members collection
+   * @return Collection
+   */
   public Collection members() {
     return this.<Collection>get("members");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

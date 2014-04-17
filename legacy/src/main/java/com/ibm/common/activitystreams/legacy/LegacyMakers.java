@@ -24,6 +24,10 @@ package com.ibm.common.activitystreams.legacy;
 import com.ibm.common.activitystreams.ASObject;
 import static com.ibm.common.activitystreams.Makers.object;
 
+/**
+ * Makers for the various Legacy object types
+ * @author james
+ */
 public final class LegacyMakers {
   
   private LegacyMakers() {}

@@ -31,6 +31,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 
+/**
+ * A GeoJSON Bounding Box (see http://geojson.org/geojson-spec.html#bounding-boxes)
+ * @author james
+ */
 public final class BoundingBox
   implements Iterable<Float>, Serializable {
 
@@ -114,6 +118,11 @@ public final class BoundingBox
       zset.build());
   }
   
+  /**
+   * Calculate the Bounding Box for a collection of Polygon objects
+   * @param polygons Iterable&ltPolygon>
+   * @return BoundingBox
+   */
   public static BoundingBox calculateBoundingBoxPolygons(Iterable<Polygon> polygons) {
     ImmutableSortedSet.Builder<Float> xset = 
       ImmutableSortedSet.naturalOrder();

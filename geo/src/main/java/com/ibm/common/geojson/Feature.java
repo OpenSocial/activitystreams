@@ -30,6 +30,11 @@ import java.util.Map;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * A GeoJSON Feature Object
+ * see http://geojson.org/geojson-spec.html#feature-objects
+ * @author james
+ */
 public final class Feature 
   extends GeoObject<Feature>
   implements Iterable<String> {

@@ -30,6 +30,13 @@ import com.google.common.base.Supplier;
 import static com.google.common.collect.ImmutableMap.copyOf;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 
+/**
+ * The base class for all GeoJSON objects. The type of object is identified
+ * by the type() property. 
+ * @author james
+ *
+ * @param <G>
+ */
 @SuppressWarnings("unchecked")
 public abstract class GeoObject<G extends GeoObject<G>>
   implements Serializable {
@@ -57,29 +64,60 @@ public abstract class GeoObject<G extends GeoObject<G>>
     protected Map<String,Object> data = 
       newLinkedHashMap();
     
+    /**
+     * Auto-calculate the bounding box when the object is created
+     * @return Builder
+     */
     public B calculateBoundingBox() {
       this.withBoundingBox = true;
       return (B)this;
     }
     
+    /**
+     * Use the given object as a template when creating this one
+     * @param geo GeObject&lt;?>
+     * @return Builder
+     */
     protected B from(GeoObject<?> geo) {
       data.putAll(geo.data);
       return (B)this;
     }
     
+    /**
+     * Set the object type
+     * @param type Type
+     * @return Builder
+     */
     public B type(Type type) {
       this.type = type;
       return (B)this;
     }
     
+    /**
+     * Set the CRS
+     * @param crs CRS
+     * @return Builder
+     */
     public B crs(CRS crs) {
       return set("crs", crs);
     }
     
+    /**
+     * Set the bounding box explicitly
+     * @param bbox BoundingBox
+     * @return Builder
+     * @see GeoObject.Builder.calculateBoundingBox()
+     */
     public B boundingBox(BoundingBox bbox) {
       return set("bbox", bbox);
     }
     
+    /**
+     * Set an additional property on this object
+     * @param name String
+     * @param val Object
+     * @return Builder
+     */
     public B set(String name, Object val) {
       if (val != null)
         this.data.put(name,val);
@@ -88,6 +126,9 @@ public abstract class GeoObject<G extends GeoObject<G>>
       return (B)this;
     }
     
+    /**
+     * Get the built object
+     */
     public final G get() {
       preGet();
       G g =  doGet();
@@ -107,6 +148,10 @@ public abstract class GeoObject<G extends GeoObject<G>>
     this.data = copyOf(builder.data);
   }
   
+  /**
+   * Return the type of object
+   * @return Type
+   */
   public Type type() {
     return type;
   }
@@ -124,14 +169,26 @@ public abstract class GeoObject<G extends GeoObject<G>>
     return data.containsKey(name);
   }
   
+  /**
+   * Return the CRS for this object
+   * @return CRS
+   */
   public CRS crs() {
     return this.<CRS>get("crs", null);
   }
   
+  /**
+   * Return the bounding box for this object
+   * @return BoundingBox
+   */
   public BoundingBox boundingBox() {
     return this.<BoundingBox>get("bbox", null);
   }
 
+  /**
+   * Return a copy of this object with a calculated bounding box
+   * @return G (a copy of this object)
+   */
   public final G withBoundingBox() {
     return has("bbox") ? 
       (G)this : makeWithBoundingBox();

@@ -30,6 +30,11 @@ import com.ibm.common.activitystreams.ASObject;
 
 /**
  * Represents an Activity Streams 1.0 style position object
+ * see (https://github.com/activitystreams/activity-schema/blob/master/activity-schema.md)
+ * 
+ * Use of the AS1Position object is deprecated. Use the GeoJSON mechanisms
+ * instead
+ * 
  * @author james
  * @deprecated Use Position
  */
@@ -43,14 +48,29 @@ public final class AS1Position
       objectType("position");
     }
     
+    /**
+     * Set the latitude
+     * @param latitude float
+     * @return Builder
+     */
     public Builder latitude(float latitude) {
       return set("latitude", max(0f,min(90.0f,latitude)));
     }
     
+    /**
+     * Set the longitude
+     * @param longitude float
+     * @return Builder
+     */
     public Builder longitude(float longitude) {
       return set("longitude", max(-180.0f,min(180.0f,longitude)));
     }
     
+    /**
+     * Set the altitude
+     * @param altitude float
+     * @return Builder
+     */
     public Builder altitude(float altitude) {
       return set("altitude", altitude);
     }
@@ -66,17 +86,32 @@ public final class AS1Position
     super(builder);
   }
   
+  /**
+   * Get the latitude 
+   * @return float
+   */
   public float latitude() {
     return max(0f,min(90.0f,getFloat("latitude")));
   }
   
+  /**
+   * Get the longitude
+   * @return float
+   */
   public float longitude() {
     return max(-180.0f,min(180.0f,getFloat("longitude")));
   }
   
+  /**
+   * Get the altitude. If the altitude property is not set, this 
+   * will return Float.MIN_VALUE;
+   * @return float
+   */
   public float altitude() {
-    return getFloat("altitude");
+    return getFloat("altitude", Float.MIN_VALUE);
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

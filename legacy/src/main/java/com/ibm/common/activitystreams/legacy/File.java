@@ -26,6 +26,10 @@ import java.io.ObjectStreamException;
 import com.google.common.net.MediaType;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * The legacy "file" objectType
+ * @author james
+ */
 public class File
   extends ASObject {
 
@@ -36,15 +40,27 @@ public class File
       objectType("file");
     }
     
+    /**
+     * Set the fileUrl property
+     * @param url String
+     * @return Builder
+     */
     public Builder fileUrl(String url) {
       return set("fileUrl", url);
     }
 
+    /**
+     * Set the MIME mediaType using the legacy "mimeType" property 
+     * name rather than the AS 2.0 "mediaType" property name
+     */
     @Override
     public Builder mediaType(MediaType mt) {
       return set("mimeType", mt);
     }
 
+    /**
+     * Get the built File object
+     */
     public File get() {
       return new File(this);
     }
@@ -55,14 +71,24 @@ public class File
     super(builder);
   }
 
+  /**
+   * Get the MIME mediaType using the legacy "mimeType" property
+   * name rather than the AS 2.0 "mediaType" property
+   */
   @Override
   public MediaType mediaType() {
     return this.<MediaType>get("mimeType");
   }
   
+  /**
+   * Get the fileUrl property
+   * @return
+   */
   public String fileUrl() {
     return getString("fileUrl");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

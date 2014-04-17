@@ -31,6 +31,15 @@ import static com.ibm.common.geojson.BoundingBox.calculateBoundingBox;
 
 import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
+/**
+ * A GeoJSON Point object
+ * see http://geojson.org/geojson-spec.html#point.
+ * 
+ * A Point object represents a single Position
+ * 
+ * @author james
+ *
+ */
 public final class Point 
   extends CoordinateGeometry<Point,Position,Position> {
 
@@ -43,21 +52,44 @@ public final class Point
       type(GeoObject.Type.POINT);
     }
     
-    public Builder position(float x, float y, float z) {
-      this.position = GeoObject.position(x, y, z);
+    /**
+     * Set the position
+     * @param northing float
+     * @param easting float
+     * @param altitude float
+     * @return Builder
+     */
+    public Builder position(float northing, float easting, float altitude) {
+      this.position = GeoObject.position(northing, easting, altitude);
       return this;
     }
     
-    public Builder position(float x, float y) {
-      this.position = GeoObject.position(x,y);
+    /**
+     * Set the position
+     * @param northing float
+     * @param easting float
+     * @return Builder
+     */
+    public Builder position(float northing, float easting) {
+      this.position = GeoObject.position(northing,easting);
       return this;
     }
     
+    /**
+     * Set the position
+     * @param position Position
+     * @return Builder
+     */
     public Builder position(Position position) {
       this.position = position;
       return this;
     }
     
+    /**
+     * Set the position 
+     * @param position Supplier&lt;Position> 
+     * @return Builder
+     */
     public Builder position(Supplier<Position> position) {
       return position(position.get());
     }

@@ -26,15 +26,33 @@ import java.io.ObjectStreamException;
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * For the legacy "product" and "image" objectTypes. These
+ * include an additional "fullImage" property whose value
+ * is a MediaLink.
+ * 
+ * @author james
+ *
+ */
 public class WithImage extends ASObject {
 
   public static final class Builder 
     extends ASObject.AbstractBuilder<WithImage, Builder> {
 
+    /**
+     * Set the fullImage property
+     * @param link MediaLink
+     * @return Builder
+     */
     public Builder fullImage(MediaLink link) {
       return set("fullImage", link);
     }
     
+    /**
+     * Set the fullImage property
+     * @param link Supplier&lt;? extends MediaLink>
+     * @return Builder
+     */
     public Builder fullImage(Supplier<? extends MediaLink> link) {
       return fullImage(link.get());
     }
@@ -49,9 +67,15 @@ public class WithImage extends ASObject {
     super(builder);
   }
   
+  /**
+   * Get the fullImage property
+   * @return MediaLink
+   */
   public MediaLink fullImage() {
     return this.<MediaLink>get("fullImage");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

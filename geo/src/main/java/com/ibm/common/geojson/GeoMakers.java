@@ -21,6 +21,11 @@
  */
 package com.ibm.common.geojson;
 
+/**
+ * Makers for the various GeoJSON object types
+ * @author james
+ *
+ */
 @SuppressWarnings("deprecation")
 public final class GeoMakers {
 

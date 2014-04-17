@@ -35,6 +35,22 @@ import com.google.common.io.BaseEncoding;
 import com.google.common.net.MediaType;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * The legacy "binary" objectType.
+ * 
+ * <pre>
+ *   InputStream in = ...
+ *   // will base64 encode, gzip compress and md5 sum the input data
+ *   // will also set the length property accordingly
+ *   Binary binary = 
+ *     LegacyMakers.binary()
+ *       .gzipData(in)
+ *       .get();
+ * </pre>
+ * 
+ * @author james
+ *
+ */
 public final class Binary
   extends ASObject {
 
@@ -45,20 +61,48 @@ public final class Binary
       objectType("binary");
     }
     
+    /**
+     * Set the input data without any compression. Will automatically
+     * set calculate the md5 sum and length properties
+     * @param in InputStream
+     * @return Builder
+     * @throws IOException
+     */
     public Builder data(
       InputStream in) 
         throws IOException {
       return data(in,null);
     }
     
+    /**
+     * Set the input data with GZip compression. Will automatically
+     * set calculate the md5 sum and length properties
+     * @param in InputStream
+     * @return Builder
+     * @throws IOException
+     */
     public Builder gzipData(InputStream in) throws IOException {
       return data(in, Compression.GZipCompression);
     }
     
+    /**
+     * Set the input data with Deflate compression. Will automatically
+     * set calculate the md5 sum and length properties
+     * @param in InputStream
+     * @return Builder
+     * @throws IOException
+     */
     public Builder deflateData(InputStream in) throws IOException {
       return data(in, Compression.DeflateCompression);
     }
     
+    /**
+     * Set the input data the given Compression. Will automatically
+     * set calculate the md5 sum and length properties
+     * @param in InputStream
+     * @return Builder
+     * @throws IOException
+     */
     public Builder data(
       InputStream in, 
       Compression<?,?> compression) 
@@ -88,19 +132,40 @@ public final class Binary
       return set("data",writer.toString());
     }
     
+    /**
+     * Manually set the md5 properties (this is not recommended. calling the data
+     * methods will automatically generate the md5 checksum for you)
+     * 
+     * @param md5 String
+     * @return Builder
+     */
     public Builder md5(String md5) {
       return set("md5", md5);
     }
     
+    /**
+     * Set the fileUrl property
+     * @param fileUrl String 
+     * @return Builder
+     */
     public Builder fileUrl(String fileUrl) {
       return set("fileUrl", fileUrl);
     }
     
+    /**
+     * Set the MIME Media Type using the Legacy "mimeType" property name
+     * rather than the AS 2.0 "mediaType" property name
+     * @param mt MediaType
+     * @return Builder
+     */
     @Override
     public Builder mediaType(MediaType mt) {
       return set("mimeType", mt);
     }
 
+    /**
+     * Get the built Binary object
+     */
     public Binary get() {
       return new Binary(this);
     }
@@ -111,34 +176,69 @@ public final class Binary
     super(builder);
   }
   
+  /**
+   * Get the fileUrl property
+   * @return String
+   */
   public String fileUrl() {
     return getString("fileUrl");
   }
   
+  /**
+   * Get the length property
+   * @return long
+   */
   public long length() {
     return getLong("length");
   }
   
+  /**
+   * Get the compression property value (typically "gzip" or "deflate")
+   * @return String
+   */
   public String compression() {
     return getString("compression");
   }
   
+  /**
+   * True if compression = gzip
+   * @return boolean
+   */
   public boolean isGzip() {
     return "gzip".equalsIgnoreCase(compression());
   }
   
+  /**
+   * True if compression = deflate
+   * @return boolean
+   */
   public boolean isDeflate() {
     return "deflate".equalsIgnoreCase(compression());
   }
   
+  /**
+   * Return the md5 checksum
+   * @return String
+   */
   public String md5() {
     return getString("md5");
   }
   
+  /**
+   * Return the literal string content of the data property.
+   * This will be base64 encoded and optionally compressed
+   * @return String
+   */
   public String data() {
     return getString("data");
   }
   
+  /**
+   * Return an InputStream for reading the data. Will
+   * decompress and base64 decode as necessary
+   * @return InputStream
+   * @throws IOException
+   */
   public InputStream read() throws IOException {
     Compression<?,?> compression =
       isGzip() ? Compression.GZipCompression :
@@ -147,6 +247,12 @@ public final class Binary
     return read(compression);
   }
   
+  /**
+   * Return an InputStream for reading the data
+   * @param compression Compression
+   * @return InputStream
+   * @throws IOException
+   */
   public InputStream read(Compression<?,?> compression) throws IOException {
     StringReader reader = new StringReader(data());
     InputStream in = BaseEncoding.base64Url().decodingStream(reader);
@@ -157,10 +263,16 @@ public final class Binary
     return in;
   }
 
+  /**
+   * Return the MIME MediaType using the legacy "mimeType" property name
+   * rather than the AS 2.0 "mediaType" name
+   */
   @Override
   public MediaType mediaType() {
     return this.<MediaType>get("mimeType");
   }
+  
+  // Java Serialization Support
  
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

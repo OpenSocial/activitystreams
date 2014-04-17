@@ -28,6 +28,18 @@ import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 import com.ibm.common.activitystreams.LinkValue;
 
+/**
+ * The legacy "question" object. Question objects
+ * have an additional "options" property that lists
+ * the possible answers to the question.
+ * 
+ * This implementation varies from the Legacy AS 1.0 
+ * model in that it allows AS 2.0 style LinkValues
+ * to be used as the value of the options property.
+ * 
+ * @author james
+ *
+ */
 public class Question extends ASObject {
 
   public static final class Builder 
@@ -37,6 +49,12 @@ public class Question extends ASObject {
       objectType("question");
     }
     
+    /**
+     * Add one or more answers to the question 
+     * @param url String
+     * @param urls String[] optional vararg
+     * @return Builder
+     */
     public Builder option(String url, String... urls) {
       if (url != null)
         link("options", url);
@@ -46,6 +64,12 @@ public class Question extends ASObject {
       return this;
     }
     
+    /**
+     * Add one or more answers to the question 
+     * @param url LinkValue
+     * @param urls LinkValue[] optional vararg
+     * @return Builder
+     */
     public Builder option(LinkValue link, LinkValue... links) {
       if (link != null)
         link("options", link);
@@ -55,10 +79,18 @@ public class Question extends ASObject {
       return this;
     }
     
+    /**
+     * Add an answer to the question
+     * @param link Supplier&lt;? extends LinkValue>
+     * @return Builder
+     */
     public Builder option(Supplier<? extends LinkValue> link) {
       return option(link.get());
     }
     
+    /**
+     * Get the built question object
+     */
     public Question get() {
       return new Question(this);
     }
@@ -69,13 +101,24 @@ public class Question extends ASObject {
     super(builder);
   }
 
+  /**
+   * Get the list of options for the question
+   * @return Iterable&lt;LinkValue>
+   */
   public Iterable<LinkValue> options() {
     return links("options");
   }
-  
+
+  /**
+   * Get the list of options for the question
+   * @param filter Predicate&lt;? super LinkValue>
+   * @return Iterable&lt;LinkValue>
+   */
   public Iterable<LinkValue> options(Predicate<? super LinkValue> filter) {
     return links("options", filter);
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);
