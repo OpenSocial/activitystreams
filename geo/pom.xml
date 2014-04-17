@@ -8,10 +8,7 @@
   <artifactId>activitystreams-geo</artifactId>
   <name>Activity Streams 2.0 - GeoJSON</name>
   
-  <description>
-    A GeoJSON Implementation that can be used standalone or with the IBM 
-    Activity Streams 2.0 Reference Implementation
-  </description>
+  <description>A GeoJSON Implementation that can be used standalone or with the IBM Activity Streams 2.0 Reference Implementation</description>
   
   <licenses>
     <license>

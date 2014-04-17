@@ -34,8 +34,8 @@
     <url>http://www.ibm.com</url>
   </organization>
   <scm>
-    <developerConnection>scm:http://github.com/opensocial/activitystreams</developerConnection>
-    <url>http://github.com/opensocial/activitystreams</url>
+    <developerConnection>scm:https://github.com/OpenSocial/incubator.git</developerConnection>
+    <url>http://github.com/OpenSocial/activitystreams</url>
   </scm>
   
   <properties>
@@ -75,4 +75,10 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <url>http://github.com/OpenSocial/activitystreams</url>
+  <description>An implementation of the Activity Streams 2.0 data format.</description>
+  <inceptionYear>2013</inceptionYear>
+  <issueManagement>
+    <url>https://github.com/OpenSocial/activitystreams/issues</url>
+  </issueManagement>
 </project>
