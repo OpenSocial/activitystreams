@@ -26,24 +26,50 @@ import java.io.ObjectStreamException;
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * For the legacy "audio" and "video" objectTypes. These have 
+ * a String "embedCode" property whose value specifies a 
+ * snippet of HTML for embedding the resource and a stream
+ * MediaLink property.
+ * 
+ * @author james
+ */
 public final class AudioVisual 
   extends ASObject {
 
   public static final class Builder 
     extends ASObject.AbstractBuilder<AudioVisual,Builder> {
 
+    /**
+     * Set the embedCode
+     * @param embed String
+     * @return Builder
+     */
     public Builder embedCode(String embed) {
       return set("embedCode", embed);
     }
     
+    /**
+     * Set the stream MediaLink
+     * @param mediaLink MediaLink
+     * @return Builder
+     */
     public Builder stream(MediaLink mediaLink) {
       return set("stream", mediaLink);
     }
     
+    /**
+     * Set the stream MediaLink
+     * @param mediaLink Supplier&lt;MediaLink>
+     * @return Builder
+     */
     public Builder stream(Supplier<? extends MediaLink> mediaLink) {
       return stream(mediaLink.get());
     }
     
+    /**
+     * Get the built AudioVisual object
+     */
     public AudioVisual get() {
       return new AudioVisual(this);
     }
@@ -54,13 +80,23 @@ public final class AudioVisual
     super(builder);
   }
   
+  /**
+   * Get the embedCode property. This should be a snippet of HTML
+   * @return String
+   */
   public String embedCode() {
     return getString("embedCode");
   }
   
+  /**
+   * Get the stream MediaLink or null if not provided
+   * @return MediaLink
+   */
   public MediaLink stream() {
     return this.<MediaLink>get("stream");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

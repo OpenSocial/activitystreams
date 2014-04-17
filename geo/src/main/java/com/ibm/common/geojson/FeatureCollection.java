@@ -30,6 +30,12 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+/**
+ * A GeoJSON FeatureCollection object
+ * see http://geojson.org/geojson-spec.html#feature-collection-objects
+ * @author james
+ *
+ */
 public final class FeatureCollection 
   extends GeoObject<FeatureCollection>
   implements Iterable<Feature> {

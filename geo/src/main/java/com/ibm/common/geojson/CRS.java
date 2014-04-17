@@ -30,6 +30,11 @@ import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * A GeoJSON Coordinate Reference System description
+ * see http://geojson.org/geojson-spec.html#coordinate-reference-system-objects
+ * @author james
+ */
 public final class CRS
   implements Iterable<String>, Serializable {
 

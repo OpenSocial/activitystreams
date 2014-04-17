@@ -33,6 +33,16 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Floats;
 
+/**
+ * A GeoJSON Position
+ * see http://geojson.org/geojson-spec.html#positions. 
+ * 
+ * Position objects consist primarily of three distinct values:
+ * a northing (latitude or x), easting (longitude or y) and altitude (z). 
+ * 
+ * @author james
+ *
+ */
 public final class Position 
   implements Iterable<Float>, Serializable  {
 

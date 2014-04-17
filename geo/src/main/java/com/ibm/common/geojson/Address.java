@@ -25,6 +25,14 @@ import java.io.ObjectStreamException;
 
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * A simple non-GeoJSON Address object modelled after the 
+ * legacy Activity Streams 1.0 Address object 
+ * (see https://github.com/activitystreams/activity-schema/blob/master/activity-schema.md)
+ * 
+ * @author james
+ *
+ */
 public final class Address 
   extends ASObject {
 
@@ -35,30 +43,65 @@ public final class Address
       objectType("address");
     }
     
+    /**
+     * The full mailing address formatted for display or use 
+     * with a printed mailing label.
+     * @param formatted String
+     * @return Builder
+     */
     public Builder formatted(String formatted) {
       return set("formatted", formatted);
     }
     
+    /**
+     * The street address including house number, street name, P.O. Box, 
+     * apartment or unit number and extended multi-line address information.
+     * @param streetAddress String
+     * @return Builder
+     */
     public Builder streetAddress(String streetAddress) {
       return set("streetAddress", streetAddress);
     }
     
+    /**
+     * The city or locality
+     * @param locality String
+     * @return Builder
+     */
     public Builder locality(String locality) {
       return set("locality", locality);
     }
     
+    /**
+     * The state or region
+     * @param region String
+     * @return Builder
+     */
     public Builder region(String region) {
       return set("region", region);
     }
     
+    /**
+     * The zip or postal code
+     * @param postalCode String
+     * @return Builder
+     */
     public Builder postalCode(String postalCode) {
       return set("postalCode", postalCode);
     }
     
+    /**
+     * The country name component
+     * @param country String
+     * @return Builder
+     */
     public Builder country(String country) {
       return set("country", country);
     }
     
+    /**
+     * Get the completed Address object
+     */
     @Override
     public Address get() {
       return new Address(this);
@@ -70,29 +113,57 @@ public final class Address
     super(builder);
   }
   
+  /**
+   * The full mailing address formatted for display or use 
+   * with a printed mailing label.
+   * @return String
+   */
   public String formatted() {
     return getString("formatted");
   }
   
+  /**
+   * The street address including house number, street name, P.O. Box, 
+   * apartment or unit number and extended multi-line address information.
+   * @return String
+   */
   public String streetAddress() {
     return getString("streetAddress");
   }
   
+  /**
+   * The city or locality
+   * @return String
+   */
   public String locality() {
     return getString("locality");
   }
   
+  /**
+   * The state or region
+   * @return String
+   */
   public String region() {
     return getString("region");
   }
   
+  /**
+   * The zip or postal code
+   * @return String
+   */
   public String postalCode() {
     return getString("postalCode");
   }
   
+  /**
+   * The country name component
+   * @return String
+   */
   public String country() {
     return getString("country");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

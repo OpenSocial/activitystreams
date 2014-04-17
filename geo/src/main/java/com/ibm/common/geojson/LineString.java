@@ -35,6 +35,34 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
+/**
+ * A GeoJSON LineString object
+ * See http://geojson.org/geojson-spec.html#linestring.
+ * 
+ * The LineString can optionally be a Linear Ring if there are at least four
+ * positions and the first and last position are equivalent.
+ * 
+ * <pre>
+ *   LineString regularLineString = 
+ *     GeoMakers.linestring()
+ *       .add(1,2)
+ *       .add(2,3)
+ *       .get();
+ *   // includes points (1,2) and (2,3)
+ *       
+ *   LineString linearRing = 
+ *     GeoMakers.linestring()
+ *       .linearRing()
+ *       .add(1,2)
+ *       .add(2,3)
+ *       .add(3,4)
+ *       .get()
+ *   // includes points (1,2), (2,3), (3,4) and (1,2)
+ * </pre>
+ * 
+ * @author james
+ *
+ */
 public final class LineString 
   extends CoordinateGeometry<LineString,Position,Iterable<Position>> {
 
@@ -56,6 +84,10 @@ public final class LineString
       type(Type.LINESTRING);
     }
     
+    /**
+     * Specify that this LineString is a linearring
+     * @return Builder
+     */
     public Builder linearRing() {
       return linearRing(true);
     }
@@ -65,6 +97,12 @@ public final class LineString
       return this;
     }
     
+    /**
+     * Add one or more positions to this linestring
+     * @param position Position
+     * @param positions Position[] optional vararg 
+     * @return Builder
+     */
     public Builder add(Position position, Position... positions) {
       this.positions.add(position);
       if (positions != null) 
@@ -73,19 +111,42 @@ public final class LineString
       return this;
     }
     
+    /**
+     * Add a single position to this linestring
+     * @param x float
+     * @param y float
+     * @return Builder
+     */
     public Builder add(float x, float y) {
       return add(GeoObject.position(x, y));
     }
     
+    /**
+     * Add a single position to this linestring
+     * @param position Supplier&lt;Position> 
+     * @return Builder
+     */
     public Builder add(Supplier<Position> position) {
       return add(position.get());
     }
     
+    /**
+     * Add one or more positions to this linestring
+     * @param positions Iterable&lt;Position>
+     * @return Builder
+     */
     public Builder add(Iterable<Position> positions) {
       this.positions.addAll(positions);
       return this;
     }
     
+    /**
+     * Add a single position to this linestring 
+     * @param x float
+     * @param y float
+     * @param z float
+     * @return Builder
+     */
     public Builder add(float x, float y, float z) {
       return add(GeoObject.position(x,y,z));
     }
@@ -122,6 +183,10 @@ public final class LineString
   }
 
   @Override
+  /**
+   * Get this LineStrings positions
+   * @return Iterable&lt;Position>
+   */
   public Iterable<Position> coordinates() {
     Iterable<Position> pos = super.coordinates();
     if (!ring)
@@ -138,6 +203,9 @@ public final class LineString
     return coordinates().iterator();
   }
   
+  /**
+   * Return a copy of this linestring with a calculated bounding box
+   */
   @Override
   public LineString makeWithBoundingBox() {
     return new LineString.Builder()
@@ -146,6 +214,8 @@ public final class LineString
       .boundingBox(calculateBoundingBoxPositions(this))
       .get();
   }
+  
+  // Java Serialization support
 
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

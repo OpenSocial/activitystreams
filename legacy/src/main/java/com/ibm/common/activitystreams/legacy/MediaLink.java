@@ -31,6 +31,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.ibm.common.activitystreams.util.AbstractWritable;
 
+/**
+ * An Activity Streams 1.0 Media Link object. 
+ * @author james
+ *
+ */
 public final class MediaLink
   extends AbstractWritable
   implements Iterable<String>, Serializable {
@@ -42,31 +47,67 @@ public final class MediaLink
     private Map<String,Object> map = 
       Maps.newHashMap();
     
+    /**
+     * When the media link refers to a video or audio resource,
+     * the duration property indicates the total length in seconds
+     * @param duration int
+     * @return Builder
+     */
     public Builder duration(int duration) {
       map.put("duration", duration);
       return this;
     }
     
+    /**
+     * When the media link refers to an object intended to be
+     * displayed visually, such as a video or image, the 
+     * height property specifies the display height in terms
+     * of device independent pixels.
+     * @param height int
+     * @return Builder
+     */
     public Builder height(int height) {
       map.put("height", height);
       return this;
     }
     
+    /**
+     * When the media link refers to an object intended to be
+     * displayed visually, such as a video or image, the 
+     * width property specifies the display width in terms
+     * of device independent pixels.
+     * @param height int
+     * @return Builder
+     */
     public Builder width(int width) {
       map.put("width", width);
       return this;
     }
     
+    /**
+     * The URL of the resource
+     * @param url String
+     * @return Builder
+     */
     public Builder url(String url) {
       map.put("url", url);
       return this;
     }
     
+    /**
+     * Set an arbitrary property on the Media Link
+     * @param key String
+     * @param val Object
+     * @return Builder
+     */
     public Builder set(String key, Object val) {
       map.put(key,val);
       return this;
     }
     
+    /**
+     * Get the built MediaLink object
+     */
     public MediaLink get() {
       return new MediaLink(this);
     }
@@ -80,22 +121,50 @@ public final class MediaLink
     this.map = ImmutableMap.copyOf(builder.map);
   }
   
+  /**
+   * Get the url property
+   * @return
+   */
   public String url() {
     return (String)map.get("url");
   }
   
+  /**
+   * When the media link refers to a video or audio resource,
+   * the duration property indicates the total length in seconds
+   * @return int
+   */
   public int duration() {
     return (Integer)map.get("duration");
   }
   
+  /**
+   * When the media link refers to an object intended to be
+   * displayed visually, such as a video or image, the 
+   * height property specifies the display height in terms
+   * of device independent pixels.
+   * @return int
+   */
   public int height() {
     return (Integer)map.get("height");
   }
   
+  /**
+   * When the media link refers to an object intended to be
+   * displayed visually, such as a video or image, the 
+   * width property specifies the display width in terms
+   * of device independent pixels.
+   * @return int
+   */
   public int width() {
     return (Integer)map.get("width");
   }
   
+  /**
+   * Return the given property
+   * @param key
+   * @return &lt;T>T
+   */
   @SuppressWarnings("unchecked")
   public <T>T get(String key) {
     return (T)map.get(key);
@@ -104,6 +173,8 @@ public final class MediaLink
   public Iterator<String> iterator() {
     return map.keySet().iterator();
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

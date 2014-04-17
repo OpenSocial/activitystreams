@@ -32,6 +32,21 @@ import com.ibm.common.geojson.Address;
 import com.ibm.common.geojson.GeoObject;
 import com.ibm.common.geojson.Place;
 
+/**
+ * Enables the use of the GeoJSON extensions with Activity Streams 2.0
+ * 
+ * <pre>
+ *   import com.ibm.common.geojson.as2.GeoModule;
+ *   import com.ibm.common.activitystreams.IO;
+ *   
+ *   //...
+ *   
+ *   IO io = IO.makeDefault(GeoModule.instance);
+ *   
+ * </pre>
+ * @author james
+ *
+ */
 @SuppressWarnings("deprecation")
 public final class GeoModule 
   implements Module {

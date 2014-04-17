@@ -26,6 +26,15 @@ import java.io.ObjectStreamException;
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * A legacy Activity Streams 1.0 Place object
+ * see https://github.com/activitystreams/activity-schema/blob/master/activity-schema.md.
+ * 
+ * Place objects have additional address, position and geo properties that
+ * describe the location.
+ * @author james
+ *
+ */
 public final class Place extends ASObject {
 
   public static final class Builder 
@@ -35,25 +44,52 @@ public final class Place extends ASObject {
       objectType("place");
     }
     
+    /**
+     * Set the address
+     * @param address Address
+     * @return Builder
+     */
     public Builder address(Address address) {
       return set("address", address);
     }
     
+    /**
+     * Set the address
+     * @param address Supplier&lt;Address>
+     * @return Builder
+     */
     public Builder address(Supplier<Address> address) {
       return address(address.get());
     }
     
-    @SuppressWarnings("deprecation") 
+    /**
+     * Set the position 
+     * @deprecated
+     * @param position AS1Position
+     * @return Builder
+     */
     public Builder position(AS1Position position) {
       return set("position", position);
     }
     
-    @SuppressWarnings("deprecation")
+    /**
+     * Set the position
+     * @deprecated 
+     * @param position Supplier&lt;AS1Position>
+     * @return Builder
+     */
     public Builder position(Supplier<AS1Position> position) {
       return position(position.get());
     }
     
-    @SuppressWarnings("deprecation")
+    /**
+     * Set the position
+     * @param latitude float
+     * @param longitude float
+     * @param altitude float
+     * @return Builder
+     * @deprecated
+     */
     public Builder position(
       float latitude, 
       float longitude, 
@@ -61,10 +97,20 @@ public final class Place extends ASObject {
       return position(GeoMakers.as1Position(latitude, longitude, altitude));
     }
     
+    /**
+     * Set the geo property
+     * @param geo GeoObject&lt;?> Any GeoJSON object can be used
+     * @return Builder
+     */ 
     public Builder geo(GeoObject<?> geo) {
       return set("geo", geo);
     }
     
+    /**
+     * Set the geo property
+     * @param geo Supplier&lt;? extends GeoObject&lt;?>> Any GeoJSON object can be used
+     * @return Builder
+     */ 
     public Builder geo(Supplier<? extends GeoObject<?>> geo) {
       return geo(geo.get());
     }
@@ -80,15 +126,27 @@ public final class Place extends ASObject {
     super(builder);
   }
   
+  /**
+   * Get the address
+   * @return Address
+   */
   public Address address() {
     return this.<Address>get("address");
   }
   
-  @SuppressWarnings("deprecation")
+  /**
+   * Get the position
+   * @deprecated
+   * @return AS1Position
+   */
   public AS1Position position() {
     return this.<AS1Position>get("position");
   }
   
+  /**
+   * Get the geo property
+   * @return &lt;G extends GeoObject&lt;?>>G
+   */
   public <G extends GeoObject<?>>G geo() {
     return this.<G>get("geo");
   }

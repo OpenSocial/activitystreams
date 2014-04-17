@@ -31,7 +31,23 @@ import com.ibm.common.activitystreams.internal.Schema;
 import com.ibm.common.activitystreams.internal.Schema.Builder;
 import com.ibm.common.activitystreams.util.Module;
 
-public class LegacyModule 
+/**
+ * Adds support for legacy objectTypes defined by the original
+ * Activity Streams 1.0 Schema (see https://github.com/activitystreams/activity-schema/blob/master/activity-schema.md)
+ * 
+ * <pre>
+ *   import com.ibm.common.activitystreams.IO;
+ *   import com.ibm.common.activitystreams.legacy.LegacyModule;
+ *   
+ *   //...
+ *   
+ *   IO io = IO.makeDefault(LegacyModule.instance);
+ *   
+ * </pre>
+ * @author james
+ *
+ */
+public final class LegacyModule 
   implements Module {
 
   public static final Module instance = new LegacyModule();

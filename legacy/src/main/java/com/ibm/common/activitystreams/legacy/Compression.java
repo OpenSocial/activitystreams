@@ -29,6 +29,13 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * Compression utility for use with the Binary object
+ * @author james
+ *
+ * @param &lt;O extends OutputStream>
+ * @param &lt;I extends InputStream>
+ */
 public interface Compression<O extends OutputStream, I extends InputStream> {
   String label();
   O compressor(OutputStream wrap) throws IOException;

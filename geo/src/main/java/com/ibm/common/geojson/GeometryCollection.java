@@ -29,6 +29,12 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+/**
+ * A GeoJSON GeometryCollection object
+ * see http://geojson.org/geojson-spec.html#geometry-collection
+ * @author james
+ *
+ */
 public final class GeometryCollection 
   extends Geometry<GeometryCollection, Geometry<?,?>> {
 

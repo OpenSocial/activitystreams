@@ -30,6 +30,12 @@ import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
 import static com.ibm.common.geojson.BoundingBox.calculateBoundingBoxPositions;
 
+/**
+ * A GeoJSON MultiPoint object
+ * see http://geojson.org/geojson-spec.html#multipoint
+ * @author james
+ *
+ */
 public final class MultiPoint 
   extends CoordinateGeometry<MultiPoint,Position,Iterable<Position>> {
 
@@ -43,6 +49,12 @@ public final class MultiPoint
       type(GeoObject.Type.MULTIPOINT);
     }
     
+    /**
+     * Add one or more positions
+     * @param position Position
+     * @param positions Position[] optional vararg
+     * @return Builder
+     */
     public Builder add(Position position, Position... positions) {
       list.add(position);
       if (positions != null)
@@ -50,19 +62,42 @@ public final class MultiPoint
       return this;
     }
     
+    /**
+     * Add one or more positions 
+     * @param positions Iterable&lt;Position>
+     * @return Builder
+     */
     public Builder add(Iterable<Position> positions) {
       list.addAll(positions);
       return this;
     }
     
+    /**
+     * Add a position
+     * @param pos Supplier&lt;Position>
+     * @return Builder
+     */
     public Builder add(Supplier<Position> pos) {
       return add(pos.get());
     }
     
+    /**
+     * Add a position
+     * @param x float
+     * @param y float 
+     * @return Builder
+     */
     public Builder add(float x, float y) {
       return add(GeoObject.position(x, y));
     }
     
+    /**
+     * Add a position
+     * @param x float
+     * @param y float
+     * @param z float
+     * @return Builder
+     */
     public Builder add(float x, float y, float z) {
       return add(GeoObject.position(x,y,z));
     }
@@ -89,6 +124,10 @@ public final class MultiPoint
     return coordinates().iterator();
   }
 
+  /**
+   * Return a copy of this object with a calculated bounding box
+   * @return MultiPoint
+   */
   @Override
   protected MultiPoint makeWithBoundingBox() {
     return new MultiPoint.Builder()

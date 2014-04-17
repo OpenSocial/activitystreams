@@ -27,6 +27,10 @@ import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 import com.ibm.common.activitystreams.Collection;
 
+/**
+ * The legacy "event" objectType
+ * @author james
+ */
 public class Event 
   extends ASObject {
 
@@ -36,55 +40,119 @@ public class Event
     Builder() {
       objectType("event");
     }
-    
+ 
+    /**
+     * Set the attendedBy Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder attendedBy(Collection collection) {
       return set("attendedBy", collection);
     }
     
+    /**
+     * Set the attendedBy Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder attendedBy(Supplier<? extends Collection> collection) {
       return attendedBy(collection.get());
     }
     
+    /**
+     * Set the attending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder attending(Collection collection) {
       return set("attending", collection);
     }
     
+    /**
+     * Set the attending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder attending(Supplier<? extends Collection> collection) {
       return attending(collection.get());
     }
     
+    /**
+     * Set the invited Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder invited(Collection collection) {
       return set("invited", collection);
     }
     
+    /**
+     * Set the invited Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder invited(Supplier<? extends Collection> collection) {
       return invited(collection.get());
     }
     
+    /**
+     * Set the maybeAttending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder maybeAttending(Collection collection) {
       return set("maybeAttending", collection);
     }
     
+    /**
+     * Set the maybeAttending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder maybeAttending(Supplier<? extends Collection> collection) {
       return maybeAttending(collection.get());
     }
     
+    /**
+     * Set the notAttendedBy Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder notAttendedBy(Collection collection) {
       return set("notAttendedBy", collection);
     }
     
+    /**
+     * Set the notAttendedBy Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder notAttendedBy(Supplier<? extends Collection> collection) {
       return notAttendedBy(collection.get());
     }
     
+    /**
+     * Set the notAttending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder notAttending(Collection collection) {
       return set("notAttending", collection);
     }
     
+    /**
+     * Set the notAttending Collection property
+     * @param collection Collection
+     * @return Builder
+     */
     public Builder notAttending(Supplier<? extends Collection> collection) {
       return notAttending(collection.get());
     }
     
+    /**
+     * Get the built Event object
+     * @return Event
+     */
     public Event get() {
       return new Event(this);
     }
@@ -95,29 +163,55 @@ public class Event
     super(builder);
   }
   
+  /**
+   * Get the attendedBy Collection or null if not provided
+   * @return Collection
+   */
   public Collection attendedBy() {
     return this.<Collection>get("attendedBy");
   }
   
+  /**
+   * Get the attending Collection or null if not provided
+   * @return Collection
+   */
   public Collection attending() {
     return this.<Collection>get("attending");
   }
   
+  /**
+   * Get the invited Collection or null if not provided
+   * @return Collection
+   */
   public Collection invited() {
     return this.<Collection>get("invited");
   }
   
+  /**
+   * Get the maybeAttending Collection or null if not provided
+   * @return Collection
+   */
   public Collection maybeAttending() {
     return this.<Collection>get("maybeAttending");
   }
   
+  /**
+   * Get the notAttendedBy Collection or null if not provided
+   * @return Collection
+   */
   public Collection notAttendedBy() {
     return this.<Collection>get("notAttendedBy");
   }
   
+  /**
+   * Get the notAttending Collection or null if not provided
+   * @return Collection
+   */
   public Collection notAttending() {
     return this.<Collection>get("notAttending");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);

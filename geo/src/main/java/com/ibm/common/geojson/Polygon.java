@@ -31,6 +31,12 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.ibm.common.geojson.Geometry.CoordinateGeometry;
 
+/**
+ * A GeoJSON Polygon object
+ * see http://geojson.org/geojson-spec.html#polygon
+ * @author james
+ *
+ */
 public final class Polygon 
   extends CoordinateGeometry<Polygon,LineString, Iterable<LineString>>  {
 
@@ -44,6 +50,12 @@ public final class Polygon
       type(Type.POLYGON);
     }
     
+    /**
+     * Add one or more LineStrings
+     * @param line LineString
+     * @param lines LineString[] optional vararg
+     * @return Builder
+     */
     public Builder add(LineString line, LineString... lines) {
       checkArgument(line.linearRing(), "Polygon coordinates MUST be Linear Rings"); 
       // TODO: Check hole requirement
@@ -54,10 +66,20 @@ public final class Polygon
       return this;
     }
     
+    /**
+     * Add a LineString
+     * @param line Supplier&lt;LineString>
+     * @return Builder
+     */
     public Builder add(Supplier<LineString> line) {
       return add(line.get());
     }
     
+    /**
+     * Add one or more LineStrings
+     * @param lines Iterable&lt;LineString>
+     * @return Builder
+     */
     public Builder add(Iterable<LineString> lines) {
       this.strings.addAll(lines);
       return this;

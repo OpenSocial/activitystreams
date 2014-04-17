@@ -25,6 +25,10 @@ import java.io.ObjectStreamException;
 
 import com.ibm.common.activitystreams.ASObject;
 
+/**
+ * The legacy "bookmark" objectType
+ * @author james
+ */
 public class Bookmark
   extends ASObject {
 
@@ -35,10 +39,18 @@ public class Bookmark
       objectType("bookmark");
     }
     
+    /**
+     * Set the targetUrl property
+     * @param url String
+     * @return Builder
+     */
     public Builder targetUrl(String url) {
       return set("targetUrl", url);
     }
-    
+
+    /**
+     * Get the built Bookmark object
+     */
     public Bookmark get() {
       return new Bookmark(this);
     }
@@ -49,9 +61,15 @@ public class Bookmark
     super(builder);
   }
   
+  /**
+   * Get the targetUrl property
+   * @return String
+   */
   public String targetUrl() {
     return getString("targetUrl");
   }
+  
+  // Java Serialization Support
   
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);
