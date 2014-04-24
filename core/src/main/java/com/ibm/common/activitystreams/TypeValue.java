@@ -22,7 +22,6 @@
 package com.ibm.common.activitystreams;
 
 import java.io.Serializable;
-
 import com.ibm.common.activitystreams.util.AbstractWritable;
 
 /**
@@ -100,7 +99,7 @@ public interface TypeValue
     extends AbstractWritable.AbstractWritableBuilder<SimpleTypeValue,Builder> {
 
       private String iri;
-      
+
       /**
        * Set the url
        * @param iri String      
@@ -110,7 +109,7 @@ public interface TypeValue
         this.iri = iri;
         return this;
       }
-      
+
       public SimpleTypeValue get() {
         return new SimpleTypeValue(this);
       }

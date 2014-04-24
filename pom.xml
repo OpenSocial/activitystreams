@@ -48,6 +48,7 @@
     <module>geo</module>
     <module>assembly</module>
     <module>legacy</module>
+    <module>typext</module>
   </modules>  
   <dependencyManagement>
     <dependencies>
