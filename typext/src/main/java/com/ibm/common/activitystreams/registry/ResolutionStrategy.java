@@ -9,6 +9,11 @@ import com.ibm.common.activitystreams.TypeValue;
  */
 public interface ResolutionStrategy {
 
+  /**
+   * Returns the Receiver instance that is used to 
+   * process preloaded TypeValue instances
+   * @return Receiver&lt;TypeValue>
+   */
   Receiver<TypeValue> preloader();
   
   /**
@@ -17,6 +22,9 @@ public interface ResolutionStrategy {
    */
   Callable<TypeValue> resolverFor(TypeValue tv);
   
+  /**
+   * Shutdown and cleanup any resources
+   */
   void shutdown();
   
   public static final ResolutionStrategy nonop = 

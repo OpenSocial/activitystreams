@@ -35,20 +35,41 @@ import com.ibm.common.activitystreams.ext.ExtModule;
 public final class TypeValueRegistry 
   implements Function<TypeValue,Future<TypeValue>> {
 
+  /**
+   * Return a new TypeValueRegistry.Builder
+   * @return Builder
+   */
   public static Builder make () {
     return new Builder();
   }
   
+  /**
+   * Create and return a default TypeValueRegistry instance
+   * @return TypeValueRegistry
+   */
   public static TypeValueRegistry makeDefault() {
     return make().get();
   }
   
+  /**
+   * Create an return a default silent TypeValueRegistry instance.
+   * Errors encountered during the resolve process will be silenced,
+   * causing the process to abort and the original "simple" TypeValue
+   * to be returned
+   * @return TypeValueRegistry
+   */
   public static TypeValueRegistry makeDefaultSilent() {
     return make()
       .resolver(DefaultResolutionStrategy.make().silentfail().get())
       .get();
   }
   
+  /**
+   * Create a default TypeValueRegistry instance using the 
+   * given Activity Streams IO object
+   * @param io
+   * @return TypeValueRegistry
+   */
   public static TypeValueRegistry makeDefault(final IO io) {
     return make()
       .io(io)
@@ -65,6 +86,12 @@ public final class TypeValueRegistry
       .get();
   }
   
+  /**
+   * Create a default silent TypeValueRegistry instance using 
+   * the given Activity Streams IO object
+   * @param io
+   * @return TypeValueRegistry
+   */
   public static TypeValueRegistry makeDefaultSilent(final IO io) {
     return make()
       .io(io)
@@ -96,25 +123,48 @@ public final class TypeValueRegistry
       DefaultResolutionStrategy.makeDefault();
     private IO io;
 
+    /**
+     * Set the IO object used
+     * @param io
+     * @return Builder
+     */
     public Builder io(IO io) {
       this.io = io;
       return this;
     }
     
+    /**
+     * Set the ExecutorService used
+     * @param executor
+     * @return Builder
+     */
     public Builder executor(ExecutorService executor) {
       this.executor = executor;
       return this;
     }
     
+    /**
+     * Set the PreloadStrategy to be used. By default the 
+     * ClasspathPreloader is used.
+     * @param strategy
+     * @return Builder
+     */
     public Builder preloader(PreloadStrategy strategy) {
       this.preloader = strategy != null ? 
         strategy : ClasspathPreloader.instance;
       return this;
     }
     
+    /**
+     * Set the ResolutionStrategy to use. By default, the
+     * DefaultResolutionStrategy is used.
+     * @param strategy
+     * @return Builder
+     */
     public Builder resolver(ResolutionStrategy strategy) {
       this.strategy = strategy != null ?
-        strategy : ResolutionStrategy.nonop;
+        strategy : 
+        DefaultResolutionStrategy.makeDefault();
       return this;
     }
     
@@ -194,12 +244,26 @@ public final class TypeValueRegistry
     return loadError;
   }
   
+  /**
+   * Block indefinitely until the preload process has completed
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
   public void waitForPreloader() 
     throws InterruptedException, 
            ExecutionException {
     loader.get();
   }
   
+  /**
+   * Block up to the given period of time waiting for the preload
+   * process to complete
+   * @param duration
+   * @param unit
+   * @throws InterruptedException
+   * @throws ExecutionException
+   * @throws TimeoutException
+   */
   public void waitForPreloader(long duration, TimeUnit unit) 
     throws InterruptedException, 
            ExecutionException, 
@@ -216,18 +280,42 @@ public final class TypeValueRegistry
         (ThreadPoolExecutor)newFixedThreadPool(1)));
   }
   
+  /**
+   * Resolve the given ID without waiting for the preloader to finish
+   * @param id
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue>resolveNoWait(String id) {
     return resolveNoWait(Makers.type(id));
   }
   
+  /**
+   * Resolve the given ID. Will wait for the preload process to complete
+   * before returning
+   * @param id
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue>resolve(String id) {
     return resolve(Makers.type(id));
   }
   
+  /**
+   * Resolve the given ID. Will wait the specified length of time for the 
+   * preload process to complete before returning
+   * @param id
+   * @param duration
+   * @param unit
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue>resolve(String id, long duration, TimeUnit unit) {
     return resolve(Makers.type(id),duration,unit);
   }
   
+  /**
+   * Resolve the given ID without waiting for the preload process to complete
+   * @param tv
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue>resolveNoWait(TypeValue tv) {
     try {
       if (tv == null) return immediateCancelledFuture();
@@ -239,6 +327,12 @@ public final class TypeValueRegistry
     }
   }
   
+  /**
+   * Resolve the given ID. Will block indefinitely until the preload process
+   * is complete
+   * @param tv
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue> resolve(TypeValue tv) {
     try {
       if (tv == null) return immediateCancelledFuture();
@@ -253,6 +347,14 @@ public final class TypeValueRegistry
     }
   }
   
+  /**
+   * Resolve the given ID. Will block for the given period of time until
+   * the preload process is complete
+   * @param tv
+   * @param timeout
+   * @param unit
+   * @return Future&lt;TypeValue>
+   */
   public Future<TypeValue> resolve(
     TypeValue tv, 
     long timeout, 

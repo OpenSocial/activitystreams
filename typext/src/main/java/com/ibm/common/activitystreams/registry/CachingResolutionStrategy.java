@@ -115,7 +115,7 @@ public abstract class CachingResolutionStrategy
         final TypeValue tv = Makers.type(t.id());
         cache.invalidate(tv);
         try {
-          TypeValue tt = cache.get(tv, new Callable<TypeValue>() {
+          cache.get(tv, new Callable<TypeValue>() {
             public TypeValue call() {
               return t;
             }
