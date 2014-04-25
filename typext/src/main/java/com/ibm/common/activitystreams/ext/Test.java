@@ -15,7 +15,7 @@ public class Test {
         .makeDefaultSilent();
     
     Future<TypeValue> tv = 
-      reg.resolve(type("urn:example:foo"));
+      reg.resolveNoWait(type("post"));
     System.out.println(tv.get().valueType());
     
   }

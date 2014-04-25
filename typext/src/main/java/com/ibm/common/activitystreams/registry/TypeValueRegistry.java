@@ -1,6 +1,8 @@
 package com.ibm.common.activitystreams.registry;
 
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.immediateCancelledFuture;
 import static com.google.common.util.concurrent.Futures.addCallback;
 import static com.google.common.util.concurrent.MoreExecutors.getExitingExecutorService;
 import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
@@ -21,6 +23,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.Monitor;
 import com.ibm.common.activitystreams.IO;
 import com.ibm.common.activitystreams.TypeValue;
+import com.ibm.common.activitystreams.ValueType;
 import com.ibm.common.activitystreams.ext.ExtModule;
 
 /**
@@ -202,8 +205,22 @@ public final class TypeValueRegistry
         (ThreadPoolExecutor)newFixedThreadPool(1)));
   }
   
+  public Future<TypeValue>resolveNoWait(TypeValue tv) {
+    try {
+      if (tv == null) return immediateCancelledFuture();
+      return tv.valueType() == ValueType.OBJECT || isToken(tv) ?
+        immediateFuture(tv) : 
+        executor.submit(strategy.resolverFor(tv));
+    } catch (Throwable t) {
+      throw propagate(t);
+    }
+  }
+  
   public Future<TypeValue> resolve(TypeValue tv) {
     try {
+      if (tv == null) return immediateCancelledFuture();
+      if (tv.valueType() == ValueType.OBJECT || isToken(tv))
+        return immediateFuture(tv);
       monitor.enterWhen(ready);
       return executor.submit(strategy.resolverFor(tv));
     } catch (Throwable t) {
@@ -218,6 +235,9 @@ public final class TypeValueRegistry
     long timeout, 
     TimeUnit unit) {
     try {
+      if (tv == null) return immediateCancelledFuture();
+      if (tv.valueType() == ValueType.OBJECT || isToken(tv))
+        return immediateFuture(tv);
       if (monitor.enterWhen(ready, timeout, unit)) {
         return executor.submit(strategy.resolverFor(tv));
       } else throw new IllegalStateException();
@@ -228,6 +248,13 @@ public final class TypeValueRegistry
     }
   }
 
+  private boolean isToken(TypeValue value) {
+    String id = value.id();
+    return id != null ?
+      id.matches("[A-Za-z0-9\\!\\#\\$\\%\\&\\'\\*\\+\\-\\.\\^\\_\\`\\|\\~]+") :
+      false;
+  }
+  
   public Future<TypeValue> apply(TypeValue input) {
     return resolve(input);
   }
