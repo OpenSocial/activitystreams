@@ -223,7 +223,7 @@ public class ASObjectAdapter
           _class != null ?
             context.deserialize(val,_class) :
             primConverter.convert(val.getAsJsonPrimitive()));
-      else if (val.isJsonArray())        
+      else if (val.isJsonArray()) { 
         builder.set(
           name,
           LinkValue.class.isAssignableFrom(_class!=null?_class:Object.class) ?
@@ -233,7 +233,7 @@ public class ASObjectAdapter
               _class,
               context,
               builder()));
-      else if (val.isJsonObject())
+      } else if (val.isJsonObject())
         builder.set(
           name, 
           context.deserialize(

@@ -31,7 +31,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.ibm.common.activitystreams.internal.Adapter;
@@ -151,11 +150,6 @@ public final class IO {
     
     public Builder using(Module module) {
       modules.add(module);
-      return this;
-    }
-    
-    public Builder typeValueResolver(Function<TypeValue,TypeValue> resolver) {
-      inner.typeValueResolver(resolver);
       return this;
     }
     

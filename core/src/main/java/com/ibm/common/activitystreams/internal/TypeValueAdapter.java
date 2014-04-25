@@ -26,7 +26,6 @@ import static com.ibm.common.activitystreams.Makers.type;
 
 import java.lang.reflect.Type;
 
-import com.google.common.base.Function;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -45,17 +44,14 @@ final class TypeValueAdapter
   extends Adapter<TypeValue> {
 
   private final Schema schema;
-  private final Function<TypeValue,TypeValue> resolver;
   
   /**
    * Constructor for TypeValueAdapter.
    * @param schema Schema
    */
   public TypeValueAdapter(
-    Schema schema, 
-    Function<TypeValue,TypeValue> resolver) {
+    Schema schema) {
     this.schema = schema;
-    this.resolver = resolver;
   }
   
   /**
@@ -97,7 +93,7 @@ final class TypeValueAdapter
       JsonPrimitive prim = 
         el.getAsJsonPrimitive();
       checkArgument(prim.isString());
-      return resolver.apply(type(prim.getAsString()));
+      return type(prim.getAsString());
     } else {
       JsonObject obj = el.getAsJsonObject();
       if (obj.has("objectType")) {
@@ -107,17 +103,17 @@ final class TypeValueAdapter
             TypeValue.class);
         Model pMap = 
           schema.forObjectType(tv.id());
-        return resolver.apply(
+        return 
           context.<ASObject>deserialize(
             el, 
             pMap.type() != null ? 
               pMap.type() : 
-              ASObject.class));
+              ASObject.class);
       } else {
-        return resolver.apply(
+        return 
           context.<ASObject>deserialize(
             el, 
-            ASObject.class));
+            ASObject.class);
       }
     }
   }

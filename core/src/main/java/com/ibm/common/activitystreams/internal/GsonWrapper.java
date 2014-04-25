@@ -51,7 +51,6 @@ import org.joda.time.ReadableDuration;
 import org.joda.time.ReadableInterval;
 import org.joda.time.ReadablePeriod;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -71,7 +70,6 @@ import com.ibm.common.activitystreams.LinkValue;
 import com.ibm.common.activitystreams.NLV;
 import com.ibm.common.activitystreams.TypeValue;
 import com.ibm.common.activitystreams.Writable;
-import com.ibm.common.activitystreams.util.TypeValueResolver;
 
 /**
  * @author james
@@ -99,13 +97,6 @@ public final class GsonWrapper {
     private Schema schema = null; // default
     private ImmutableList.Builder<AdapterEntry<?>> adapters =
       ImmutableList.builder();
-    private Function<TypeValue,TypeValue> typeValueResolver = 
-      TypeValueResolver.DEFAULT_INSTANCE;
-    
-    public Builder typeValueResolver(Function<TypeValue,TypeValue> resolver) {
-      this.typeValueResolver = resolver;
-      return this;
-    }
     
     /**
      * Method charset.
@@ -250,7 +241,7 @@ public final class GsonWrapper {
     Schema schema, 
     ASObjectAdapter base) {
     return new GsonBuilder()
-      .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema, builder.typeValueResolver))
+      .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema))
       .registerTypeHierarchyAdapter(LinkValue.class, new LinkValueAdapter(schema))
       .registerTypeHierarchyAdapter(NLV.class, NLV)
       .registerTypeHierarchyAdapter(Iterable.class, ITERABLE)
