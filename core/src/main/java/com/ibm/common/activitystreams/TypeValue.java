@@ -22,6 +22,8 @@
 package com.ibm.common.activitystreams;
 
 import java.io.Serializable;
+import java.util.Objects;
+
 import com.ibm.common.activitystreams.util.AbstractWritable;
 
 /**
@@ -122,7 +124,24 @@ public interface TypeValue
       super(builder);
       this.iri = builder.iri;
     }
-  
+    
+    @Override
+    public int hashCode() {
+      return Objects.hash(iri);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      SimpleTypeValue other = (SimpleTypeValue) obj;
+      return Objects.equals(iri,other.iri);
+    }
+
     /**
      * Return the type value identifier
      * @return String 

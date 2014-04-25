@@ -110,9 +110,18 @@ public abstract class CachingResolutionStrategy
       this.cache = cache;
     }
 
-    public void receive(TypeValue t) {
-      if (t.valueType() == ValueType.OBJECT && t.id() != null)
-        cache.put(Makers.type(t.id()),t);
+    public void receive(final TypeValue t) {
+      if (t.valueType() == ValueType.OBJECT && t.id() != null) {
+        final TypeValue tv = Makers.type(t.id());
+        cache.invalidate(tv);
+        try {
+          TypeValue tt = cache.get(tv, new Callable<TypeValue>() {
+            public TypeValue call() {
+              return t;
+            }
+          });
+        } catch (Throwable e) {}
+      }
     }
     
   }

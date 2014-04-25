@@ -164,13 +164,28 @@ public class Collection
      **/
     protected abstract A create();
     
+    @Override
+    public B set(String key, Object value) {
+      if (key.equals("items")) {
+        if (value instanceof ArrayLinkValue) {
+          ArrayLinkValue alv = (ArrayLinkValue) value;
+          for (LinkValue lv : alv) {
+            list.add((ASObject)lv);
+          }
+        } else if (value instanceof ASObject)
+          list.add((ASObject) value);
+        return (B)this;
+      } else return super.set(key,value);
+    }
+
+
     /**
      * Method get.
      * @return A 
      * @see com.google.common.base.Supplier#get() 
      **/
     public A get() {
-      set("items", list.build());
+      super.set("items", list.build());
       return create();
     }
     

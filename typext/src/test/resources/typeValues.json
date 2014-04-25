@@ -1,0 +1,15 @@
+{
+  "objectType": "collection",
+  "items": [
+    {
+      "objectType": "verb",
+      "id": "urn:example:verbs:foo",
+      "displayName": "Foo"
+    },
+    {
+      "objectType": "objectType",
+      "id": "urn:example:types:bar",
+      "displayName": "Bar"
+    }
+  ]
+}

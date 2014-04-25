@@ -149,5 +149,9 @@
       <version>4.3.3</version>
       <type>pom</type>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
   </dependencies>
 </project>

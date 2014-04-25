@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.Monitor;
 import com.ibm.common.activitystreams.IO;
+import com.ibm.common.activitystreams.Makers;
 import com.ibm.common.activitystreams.TypeValue;
 import com.ibm.common.activitystreams.ValueType;
 import com.ibm.common.activitystreams.ext.ExtModule;
@@ -165,11 +166,21 @@ public final class TypeValueRegistry
       future, 
       new FutureCallback<Object>() {
         public void onSuccess(Object result) {
-          readyStatus = Status.READY;
+          monitor.enter();
+          try {
+            readyStatus = Status.READY;
+          } finally {
+            monitor.leave();
+          }
         }
         public void onFailure(Throwable t) {
-          readyStatus = Status.ERROR;
-          loadError = t;
+          monitor.enter();
+          try {
+            readyStatus = Status.ERROR;
+            loadError = t;
+          } finally {
+            monitor.leave();
+          }
         }
       });
     return future;
@@ -203,6 +214,18 @@ public final class TypeValueRegistry
     return listeningDecorator(
       getExitingExecutorService(
         (ThreadPoolExecutor)newFixedThreadPool(1)));
+  }
+  
+  public Future<TypeValue>resolveNoWait(String id) {
+    return resolveNoWait(Makers.type(id));
+  }
+  
+  public Future<TypeValue>resolve(String id) {
+    return resolve(Makers.type(id));
+  }
+  
+  public Future<TypeValue>resolve(String id, long duration, TimeUnit unit) {
+    return resolve(Makers.type(id),duration,unit);
   }
   
   public Future<TypeValue>resolveNoWait(TypeValue tv) {
