@@ -212,19 +212,11 @@ public final class GsonWrapper {
         Schema.make().get();
     ASObjectAdapter base = 
       new ASObjectAdapter(schema);
-    GsonBuilder b = initGsonBuilder(builder,schema,base);
-    for (AdapterEntry<?> entry : builder.adapters.build()) {
-      if (entry.hier)
-        b.registerTypeHierarchyAdapter(
-          entry.type, 
-          entry.adapter!=null ?
-            entry.adapter : base);
-      else
-        b.registerTypeAdapter(
-          entry.type, 
-          entry.adapter!=null ? 
-            entry.adapter:base);
-    }
+    GsonBuilder b = initGsonBuilder(
+      builder,
+      schema,
+      base, 
+      builder.adapters.build());
     if (builder.pretty)
       b.setPrettyPrinting();
     this.gson = b.create();
@@ -239,12 +231,29 @@ public final class GsonWrapper {
   private static GsonBuilder initGsonBuilder(
     Builder builder, 
     Schema schema, 
-    ASObjectAdapter base) {
-    return new GsonBuilder()
-      .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema))
-      .registerTypeHierarchyAdapter(LinkValue.class, new LinkValueAdapter(schema))
+    ASObjectAdapter base,
+    Iterable<AdapterEntry<?>> adapters) {
+    
+    GsonBuilder gson = new GsonBuilder()
+    .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema))
+    .registerTypeHierarchyAdapter(LinkValue.class, new LinkValueAdapter(schema))
+    .registerTypeHierarchyAdapter(Iterable.class, ITERABLE);
+    
+    for (AdapterEntry<?> entry : adapters) {
+      if (entry.hier)
+        gson.registerTypeHierarchyAdapter(
+          entry.type, 
+          entry.adapter!=null ?
+            entry.adapter : base);
+      else
+        gson.registerTypeAdapter(
+          entry.type, 
+          entry.adapter!=null ? 
+            entry.adapter:base);
+    }
+    
+    return gson
       .registerTypeHierarchyAdapter(NLV.class, NLV)
-      .registerTypeHierarchyAdapter(Iterable.class, ITERABLE)
       .registerTypeHierarchyAdapter(ActionsValue.class, ACTIONS)
       .registerTypeHierarchyAdapter(Optional.class, OPTIONAL)
       .registerTypeHierarchyAdapter(Range.class, RANGE)

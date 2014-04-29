@@ -18,6 +18,7 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -43,7 +44,8 @@ public final class HttpFetch
     implements Supplier<HttpFetch> {
 
     private final RegistryBuilder<ConnectionSocketFactory> csfr = 
-      RegistryBuilder.<ConnectionSocketFactory>create();
+      RegistryBuilder.<ConnectionSocketFactory>create()
+        .register("http", PlainConnectionSocketFactory.INSTANCE);
     private ConnectionConfig defaultConnectionConfig;
     private SocketConfig defaultSocketConfig;
     private final ImmutableMap.Builder<HttpHost,ConnectionConfig> connectionConfigs = 
