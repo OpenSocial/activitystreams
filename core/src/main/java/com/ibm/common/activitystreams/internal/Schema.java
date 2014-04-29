@@ -200,10 +200,16 @@ public final class Schema {
       return this;
     }
 
+    public Model model(String objectType) {
+      return objectTypeMap.get(objectType);
+    }
+    
+    public Model model() {
+      return objectClassMap.get(ASObject.Builder.class);
+    }
+    
     /**
      * Method get.
-    
-    
      * @return Schema * @see com.google.common.base.Supplier#get() */
     public Schema get() {
       return new Schema(this);
