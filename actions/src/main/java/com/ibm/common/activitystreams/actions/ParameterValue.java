@@ -2,11 +2,11 @@ package com.ibm.common.activitystreams.actions;
 
 import java.io.Serializable;
 
+import com.google.common.base.Objects;
 import com.ibm.common.activitystreams.IO;
 import com.ibm.common.activitystreams.ValueType;
 import com.ibm.common.activitystreams.Writable;
 import com.ibm.common.activitystreams.util.AbstractWritable;
-import com.sun.org.apache.xalan.internal.utils.Objects;
 
 public interface ParameterValue
   extends Writable, Serializable {
@@ -69,7 +69,7 @@ public interface ParameterValue
       if (getClass() != obj.getClass())
         return false;
       SimpleParameterValue other = (SimpleParameterValue) obj;
-      return Objects.equals(type,other.type);
+      return Objects.equal(type,other.type);
     }
     
     public String toString(IO io) {
