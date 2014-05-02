@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.ibm.common.activitystreams.TypeValue;
 import com.ibm.common.activitystreams.util.AbstractDictionaryObject;
 
 /**

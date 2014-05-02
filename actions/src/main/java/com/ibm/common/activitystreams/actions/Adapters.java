@@ -22,7 +22,6 @@
 package com.ibm.common.activitystreams.actions;
 
 import com.ibm.common.activitystreams.ASObject;
-import com.ibm.common.activitystreams.TypeValue;
 import com.ibm.common.activitystreams.actions.StylesValue.Builder;
 import com.ibm.common.activitystreams.internal.Adapter;
 import com.ibm.common.activitystreams.util.AbstractDictionaryObjectAdapter;

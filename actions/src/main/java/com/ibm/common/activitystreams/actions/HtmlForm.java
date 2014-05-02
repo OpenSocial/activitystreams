@@ -21,15 +21,10 @@
  */
 package com.ibm.common.activitystreams.actions;
 
-import static com.ibm.common.activitystreams.Makers.object;
-import static com.ibm.common.activitystreams.Makers.type;
-
 import java.io.ObjectStreamException;
 
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
-import com.ibm.common.activitystreams.TypeValue;
-import com.ibm.common.activitystreams.actions.UrlTemplate.Builder;
 
 /**
  */
