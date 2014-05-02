@@ -30,10 +30,9 @@ import com.ibm.common.activitystreams.ASObject;
 import com.ibm.common.activitystreams.LinkValue;
 import com.ibm.common.activitystreams.TypeValue;
 
-/**
- */
 public final class TypedPayload 
-  extends ASObject {
+  extends ASObject
+  implements ParameterValue {
 
   /**
    * Method makeTypedPayload.
@@ -62,7 +61,8 @@ public final class TypedPayload
   public static final class Builder 
     extends ASObject.AbstractBuilder<TypedPayload, Builder> {
 
-    private Builder() {
+    public Builder() {
+      writeUsing(ActionMakers.io);
       objectType("TypedPayload");
     }
 

@@ -22,13 +22,13 @@
 package com.ibm.common.activitystreams.actions;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.ibm.common.activitystreams.ASObject;
-import com.ibm.common.activitystreams.TypeValue;
-import com.ibm.common.activitystreams.ValueType;
-import com.ibm.common.activitystreams.util.AbstractDictionaryObject;
+import com.google.common.collect.Maps;
+import com.ibm.common.activitystreams.util.AbstractWritable;
 
 /**
  * The value of the "parameters" property... 
@@ -36,48 +36,58 @@ import com.ibm.common.activitystreams.util.AbstractDictionaryObject;
  * @version $Revision: 1.0 $
  */
 public final class ParametersValue
-  extends AbstractDictionaryObject<TypeValue>
-  implements Serializable {
+  extends AbstractWritable
+  implements Serializable, Iterable<String> {
 
-  /**
-   * Method make.
-  
-   * @return Builder */
   public static Builder make() {
     return new Builder();
   }
-  
  
   /**
    * @author james
    * @version $Revision: 1.0 $
    */
   public static final class Builder 
-    extends AbstractDictionaryObject.AbstractBuilder
-      <TypeValue,ParametersValue,Builder> {
+    extends AbstractWritable.AbstractWritableBuilder
+      <ParametersValue,Builder> {
 
-    /**
-     * Method set.
-     * @param param String
-     * @param iri String
+    private final Map<String,Object> params = 
+      Maps.newHashMap();
     
-     * @return Builder */
-    public Builder set(String param, String iri) {
-      return super.set(
-        param, 
-        TypeValue.SimpleTypeValue.make(iri));
+    public Builder() {
+      writeUsing(ActionMakers.io);
     }
     
-    /**
-     * Method get.
+    public boolean notEmpty() {
+      return !params.isEmpty();
+    }
     
+    public Builder param(String param, String iri) {
+      params.put(param, ActionMakers.parameter(iri));
+      return this;
+    }
     
-     * @return ParametersValue * @see com.google.common.base.Supplier#get() */
+    public Builder param(
+      String param, 
+      ParameterValue parameter) {
+      params.put(param, parameter);
+      return this;
+    }
+    
+    public Builder param(
+      String param, 
+      Supplier<? extends ParameterValue> parameter) {
+      params.put(param, parameter);
+      return this;
+    }
+    
     public ParametersValue get() {
       return new ParametersValue(this);
     }
     
   }
+  
+  private final ImmutableMap<String,Object> params;
   
   /**
    * Constructor for ParametersValue.
@@ -85,66 +95,22 @@ public final class ParametersValue
    */
   ParametersValue(Builder builder) {
     super(builder);
+    this.params = ImmutableMap.copyOf(builder.params);
   }
   
-  /**
-   * Method get.
-   * @param param String
-  
-   * @return TypeValue */
+  public Iterator<String> iterator() {
+    return params.keySet().iterator();
+  }
+
   @SuppressWarnings("unchecked")
-  public <T extends TypeValue>T get(String param) {
-    return (T)super.getSingle(param);
+  public <O extends ParameterValue>O get(String param) {
+    return (O)params.get(param);
   }
   
-  /**
-   * Method id.
-   * @param param String
-   * @return String
-   */
-  public String id(String param) {
-    TypeValue tv = get(param);
-    return tv != null ? tv.id() : null;
+  public boolean has(String param) {
+    return params.containsKey(param);
   }
   
-  /**
-   * Method required.
-   * @param param String
-   * @return boolean
-   */
-  public boolean required(String param) {
-    TypeValue tv = get(param);
-    if (tv == null) 
-      return false;
-    if (tv.valueType() == ValueType.SIMPLE)
-      return true;
-    ASObject obj = (ASObject) tv;
-    return obj.getBoolean("required", true);
-  }
-  
-  /**
-   * Method value.
-   * @param param String
-   * @param defaultValue O
-   * @return O
-   */
-  public <O>O value(String param, O defaultValue) {
-    TypeValue tv = get(param);
-    if (tv == null || tv.valueType() == ValueType.SIMPLE)
-      return defaultValue;
-    ASObject obj = (ASObject) tv;
-    return obj.<O>get("value", defaultValue);
-  }
-  
-  /**
-   * Method value.
-   * @param param String
-   * @return O
-   */
-  public <O>O value(String param) {
-    return value(param,null);
-  }
- 
   Object writeReplace() throws java.io.ObjectStreamException {
     return new SerializedForm(this);
   }
@@ -154,19 +120,14 @@ public final class ParametersValue
     private static final long serialVersionUID = -1975376657749952999L;
     private ImmutableMap<String,Object> map;
     SerializedForm(ParametersValue obj) {
-      ImmutableMap.Builder<String,Object> builder = 
-        ImmutableMap.builder();
-      for (String key : obj)
-        builder.put(key, obj.get(key));
-      this.map = builder.build();
+      map = obj.params;
     }
 
     Object readResolve() 
       throws java.io.ObjectStreamException {
         ParametersValue.Builder builder = 
           ParametersValue.make();
-        for (Map.Entry<String,Object> entry : map.entrySet())
-          builder.set(entry.getKey(), (TypeValue) entry.getValue());
+        builder.params.putAll(map);
         return builder.get();
     }
   }

@@ -24,11 +24,18 @@ package com.ibm.common.activitystreams.actions;
 import static com.ibm.common.activitystreams.Makers.object;
 
 import com.ibm.common.activitystreams.ASObject;
+import com.ibm.common.activitystreams.IO;
+import com.ibm.common.activitystreams.actions.ParameterValue.SimpleParameterValue;
 
 /**
  */
 public final class ActionMakers {
 
+  public static final IO io = 
+    IO.makeDefault(ActionsModule.instance);
+  public static final IO ioPretty = 
+    IO.makeDefaultPrettyPrint(ActionsModule.instance);
+  
   public static final String TARGET_NONE = "NONE";
   public static final String TARGET_DEFAULT = "DEFAULT";
   public static final String TARGET_NEW = "NEW";
@@ -220,7 +227,7 @@ public final class ActionMakers {
    * @param id String
    * @return Parameter.Builder
    */
-  public static Parameter.Builder parameter(String id) {
-    return parameter().id(id);
+  public static SimpleParameterValue parameter(String id) {
+    return new SimpleParameterValue.Builder().type(id).get();
   }
 }

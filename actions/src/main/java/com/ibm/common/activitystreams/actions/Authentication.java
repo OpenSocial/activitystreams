@@ -47,6 +47,10 @@ public final class Authentication
     extends AbstractDictionaryObject.AbstractBuilder<
       ASObject,Authentication,Builder> {
 
+    public Builder() {
+      writeUsing(ActionMakers.io);
+    }
+    
     /**
      * Method get.
      * @return Authentication

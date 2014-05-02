@@ -42,17 +42,6 @@ final class Adapters {
       }
     };
     
-    static final Adapter<ParametersValue> PARAMETERS =
-      new AbstractDictionaryObjectAdapter
-       <TypeValue,
-        ParametersValue,
-        ParametersValue.Builder>(TypeValue.class) {
-      @Override
-      protected ParametersValue.Builder builder() {
-        return ParametersValue.make();
-      }
-    };
-    
     static final Adapter<StylesValue> STYLES  =
       new AbstractDictionaryObjectAdapter
         <String,
