@@ -43,6 +43,10 @@ public abstract class ActionHandler
     private final Authentication.Builder auth = 
       Authentication.make();
     
+    public Builder() {
+      writeUsing(ActionMakers.io);
+    }
+    
     /**
      * Method confirm.
      * @return B
@@ -361,4 +365,5 @@ public abstract class ActionHandler
     return auth != null ?
       (A)auth.get(key) : null;
   }
+
 }

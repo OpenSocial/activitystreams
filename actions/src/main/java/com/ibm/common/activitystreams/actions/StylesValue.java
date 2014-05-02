@@ -56,6 +56,10 @@ public final class StylesValue
     extends AbstractDictionaryObject.AbstractBuilder
       <String, StylesValue, Builder> {
 
+    public Builder() {
+      writeUsing(ActionMakers.io);
+    }
+    
     /**
      * Method media.
      * @param query String

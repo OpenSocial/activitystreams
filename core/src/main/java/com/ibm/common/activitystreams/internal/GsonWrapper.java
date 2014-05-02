@@ -237,7 +237,29 @@ public final class GsonWrapper {
     GsonBuilder gson = new GsonBuilder()
     .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema))
     .registerTypeHierarchyAdapter(LinkValue.class, new LinkValueAdapter(schema))
-    .registerTypeHierarchyAdapter(Iterable.class, ITERABLE);
+    .registerTypeHierarchyAdapter(Iterable.class, ITERABLE)
+    .registerTypeHierarchyAdapter(ASObject.class, base)
+    .registerTypeHierarchyAdapter(Collection.class, base)
+    .registerTypeHierarchyAdapter(Activity.class, base)
+    .registerTypeHierarchyAdapter(NLV.class, NLV)
+    .registerTypeHierarchyAdapter(ActionsValue.class, ACTIONS)
+    .registerTypeHierarchyAdapter(Optional.class, OPTIONAL)
+    .registerTypeHierarchyAdapter(Range.class, RANGE)
+    .registerTypeHierarchyAdapter(Table.class, TABLE)
+    .registerTypeHierarchyAdapter(LazilyParsedNumber.class, NUMBER)
+    .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, NUMBER)
+    .registerTypeHierarchyAdapter(ReadableDuration.class, DURATION)
+    .registerTypeHierarchyAdapter(ReadablePeriod.class, PERIOD)
+    .registerTypeHierarchyAdapter(ReadableInterval.class, INTERVAL)
+    .registerTypeAdapter(
+      Activity.Status.class, 
+      forEnum(
+        Activity.Status.class, 
+        Activity.Status.OTHER))
+    .registerTypeAdapter(Date.class, DATE)
+    .registerTypeAdapter(DateTime.class, DATETIME)
+    .registerTypeAdapter(MediaType.class, MIMETYPE)
+    .registerTypeHierarchyAdapter(Multimap.class, MULTIMAP);
     
     for (AdapterEntry<?> entry : adapters) {
       if (entry.hier)
@@ -252,30 +274,8 @@ public final class GsonWrapper {
             entry.adapter:base);
     }
     
-    return gson
-      .registerTypeHierarchyAdapter(NLV.class, NLV)
-      .registerTypeHierarchyAdapter(ActionsValue.class, ACTIONS)
-      .registerTypeHierarchyAdapter(Optional.class, OPTIONAL)
-      .registerTypeHierarchyAdapter(Range.class, RANGE)
-      .registerTypeHierarchyAdapter(Table.class, TABLE)
-      .registerTypeHierarchyAdapter(LazilyParsedNumber.class, NUMBER)
-      .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, NUMBER)
-      .registerTypeHierarchyAdapter(ASObject.class, base)
-      .registerTypeHierarchyAdapter(Collection.class, base)
-      .registerTypeHierarchyAdapter(Activity.class, base)
-      .registerTypeHierarchyAdapter(ReadableDuration.class, DURATION)
-      .registerTypeHierarchyAdapter(ReadablePeriod.class, PERIOD)
-      .registerTypeHierarchyAdapter(ReadableInterval.class, INTERVAL)
-      .registerTypeAdapter(
-        Activity.Status.class, 
-        forEnum(
-          Activity.Status.class, 
-          Activity.Status.OTHER))
-      .registerTypeAdapter(Date.class, DATE)
-      .registerTypeAdapter(DateTime.class, DATETIME)
-      .registerTypeAdapter(MediaType.class, MIMETYPE)
-      .registerTypeHierarchyAdapter(Multimap.class, MULTIMAP)
-    ;
+    return gson;
+
   }
   
   /**

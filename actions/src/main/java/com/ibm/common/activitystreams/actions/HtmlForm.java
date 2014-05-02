@@ -29,6 +29,7 @@ import java.io.ObjectStreamException;
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
 import com.ibm.common.activitystreams.TypeValue;
+import com.ibm.common.activitystreams.actions.UrlTemplate.Builder;
 
 /**
  */
@@ -51,86 +52,28 @@ public final class HtmlForm
     private final ParametersValue.Builder params = 
       ParametersValue.make();
     
-    private Builder() {
+    public Builder() {
+      writeUsing(ActionMakers.io);
       objectType("HtmlForm");
       mediaType("application/x-www-form-urlencoded");
     }
     
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @return Builder
-     */
-    public Builder parameter(
-      String name, 
-      String iri) {
-      params.set(name, type(iri));
+    public Builder parameter(String name, String iri) {
+      params.param(name, iri);
       return this;
     }
     
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @param required boolean
-     * @return Builder
-     */
     public Builder parameter(
       String name, 
-      String iri, 
-      boolean required) {
-      return parameter(
-        name, 
-          object()
-          .id(iri)
-          .set("required", required));
+      ParameterValue parameter) {
+        params.param(name, parameter);
+        return this;
     }
     
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @param required boolean
-     * @param value Object
-     * @return Builder
-     */
     public Builder parameter(
       String name, 
-      String iri, 
-      boolean required, 
-      Object value) {
-      return parameter(
-        name,
-        object()
-          .id(iri)
-          .set("required", required)
-          .set("value", value));
-    }
-    
-    /**
-     * Method parameter.
-     * @param name String
-     * @param lv TypeValue
-     * @return Builder
-     */
-    public Builder parameter(
-      String name, 
-      TypeValue lv) {
-      params.set(name, lv);
-      return this;
-    }
-    
-    /**
-     * Method parameter.
-     * @param name String
-     * @param lv Supplier<? extends TypeValue>
-     * @return Builder
-     */
-    public Builder parameter(
-      String name, 
-      Supplier<? extends TypeValue> lv) {
-      return parameter(name, lv.get());
+      Supplier<? extends ParameterValue> parameter) {
+        return parameter(name, parameter.get());
     }
     
     /**

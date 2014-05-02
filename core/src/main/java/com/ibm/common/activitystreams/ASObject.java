@@ -23,7 +23,6 @@ package com.ibm.common.activitystreams;
 
 import static com.google.common.base.Enums.getIfPresent;
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.Iterables.filter;
@@ -45,6 +44,7 @@ import static com.ibm.common.activitystreams.util.Converters.toInterval;
 import static com.ibm.common.activitystreams.util.Converters.toLong;
 import static com.ibm.common.activitystreams.util.Converters.toPeriod;
 import static com.ibm.common.activitystreams.util.Converters.toShort;
+import static com.ibm.common.activitystreams.util.Util.DEFAULT_LOCALE;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
 import static org.joda.time.DateTimeZone.UTC;
@@ -53,7 +53,6 @@ import static org.joda.time.Duration.standardSeconds;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -144,19 +143,7 @@ public class ASObject
     checkArgument(l >= 0);
     return l;
   }
-  
-  /**
-   * Method convLocale.
-   * @param locale Locale
-   * @return String 
-   **/
-  private static String convLocale(Locale locale) {
-    return checkNotNull(locale).toString().replaceAll("_", "-");
-  }
-  
-  private static final String DEFAULT_LOCALE = 
-    convLocale(Locale.getDefault());
-  
+    
   /**
    * Abstract base builder for ASObject instances.
    */

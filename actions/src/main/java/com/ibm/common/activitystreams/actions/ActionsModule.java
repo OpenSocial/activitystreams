@@ -22,7 +22,6 @@
 package com.ibm.common.activitystreams.actions;
 
 import static com.ibm.common.activitystreams.actions.Adapters.AUTH;
-import static com.ibm.common.activitystreams.actions.Adapters.PARAMETERS;
 import static com.ibm.common.activitystreams.actions.Adapters.STYLES;
 
 import com.ibm.common.activitystreams.IO.Builder;
@@ -47,10 +46,10 @@ public final class ActionsModule
            .hierarchicalAdapter(IntentActionHandler.class,base)
            .hierarchicalAdapter(EmbedActionHandler.class,base)
            .hierarchicalAdapter(HtmlForm.class,base)
+           .hierarchicalAdapter(ParametersValue.class, ParametersAdapter.instance)
+           .hierarchicalAdapter(ParameterValue.class, ParameterAdapter.instance)
            .hierarchicalAdapter(UrlTemplate.class,base)
            .hierarchicalAdapter(TypedPayload.class,base)
-           .hierarchicalAdapter(Parameter.class,base)
-           .hierarchicalAdapter(ParametersValue.class, PARAMETERS)
            .hierarchicalAdapter(Authentication.class, AUTH)
            .hierarchicalAdapter(StylesValue.class, STYLES);
   }
@@ -58,7 +57,6 @@ public final class ActionsModule
   @Override
   public void apply(Schema.Builder builder) {
     builder.map("HtmlForm", withParameters.template(HtmlForm.class, HtmlForm.Builder.class))
-      .map("parameter", parameter)
       .map("TypedPayload", typedPayload)
       .map("UrlTemplate", withParameters.template(UrlTemplate.class, UrlTemplate.Builder.class))
       .map("HttpActionHandler", actionHandler.template(HttpActionHandler.class, HttpActionHandler.Builder.class))
@@ -89,15 +87,11 @@ public final class ActionsModule
     public final static Model typedPayload =
       Model
         .make("object")
+        .type(TypedPayload.class, TypedPayload.Builder.class)
         .linkValue("schema")
         .typeValue("type")
         .get();
         
-    public final static Model parameter = 
-      Model
-        .make("object")
-        .typeValue("type")
-        .type(Parameter.class, Parameter.Builder.class)
-        .get();
+
     
 }

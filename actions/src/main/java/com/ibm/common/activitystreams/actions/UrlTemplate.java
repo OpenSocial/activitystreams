@@ -21,19 +21,16 @@
  */
 package com.ibm.common.activitystreams.actions;
 
-import static com.ibm.common.activitystreams.Makers.type;
-import static com.ibm.common.activitystreams.Makers.object;
-
 import java.io.ObjectStreamException;
 
 import com.google.common.base.Supplier;
 import com.ibm.common.activitystreams.ASObject;
-import com.ibm.common.activitystreams.TypeValue;
 
 /**
  */
 public final class UrlTemplate 
-  extends ASObject {
+  extends ASObject
+  implements ParameterValue {
 
   /**
    * Method makeUrlTemplate.
@@ -51,95 +48,34 @@ public final class UrlTemplate
     private final ParametersValue.Builder params = 
       ParametersValue.make();
     
-    private Builder() {
+    public Builder() {
+      writeUsing(ActionMakers.io);
       objectType("UrlTemplate");
     }
     
-    /**
-     * Method template.
-     * @param template String
-     * @return Builder
-     */
     public Builder template(String template) {
       set("template", template);
       return this;
     }
 
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @return Builder
-     */
     public Builder parameter(String name, String iri) {
-      params.set(name, type(iri));
+      params.param(name, iri);
       return this;
     }
     
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @param required boolean
-     * @return Builder
-     */
     public Builder parameter(
       String name, 
-      String iri, 
-      boolean required) {
-      return parameter(
-        name, 
-        object()
-          .id(iri)
-          .set("required", required));
+      ParameterValue parameter) {
+        params.param(name, parameter);
+        return this;
     }
     
-    /**
-     * Method parameter.
-     * @param name String
-     * @param iri String
-     * @param required boolean
-     * @param value Object
-     * @return Builder
-     */
     public Builder parameter(
       String name, 
-      String iri, 
-      boolean required, 
-      Object value) {
-      return parameter(
-        name,
-        object()
-          .id(iri)
-          .set("required", required)
-          .set("value", value));
+      Supplier<? extends ParameterValue> parameter) {
+        return parameter(name, parameter.get());
     }
-    
-    /**
-     * Method parameter.
-     * @param name String
-     * @param lv TypeValue
-     * @return Builder
-     */
-    public Builder parameter(
-      String name, 
-      TypeValue lv) {
-      params.set(name, lv);
-      return this;
-    }
-    
-    /**
-     * Method parameter.
-     * @param name String
-     * @param lv Supplier<? extends TypeValue>
-     * @return Builder
-     */
-    public Builder parameter(
-      String name, 
-      Supplier<? extends TypeValue> lv) {
-      return parameter(name, lv.get());
-    }
-    
+        
     /**
      * Method get.
      * @return UrlTemplate
