@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Objects;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -160,7 +161,24 @@ public interface LinkValue
       super(builder);
       this.iri = builder.iri;
     }
-    
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(iri);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+          return false;
+      SimpleLinkValue other = (SimpleLinkValue) obj;
+      return Objects.equals(iri,other.iri);
+    }
+
     /**
      * Return the url
      * @return String 
@@ -289,7 +307,24 @@ public interface LinkValue
       super(builder);
       this.links = builder.links.build();
     }
-    
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(links);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      ArrayLinkValue other = (ArrayLinkValue) obj;
+      return Objects.equals(links,other.links);
+    }
+
     /**
      * Method iterator.
      * @return Iterator<LinkValue> 

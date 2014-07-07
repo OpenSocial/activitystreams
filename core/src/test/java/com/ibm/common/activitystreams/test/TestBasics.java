@@ -91,7 +91,18 @@ public final class TestBasics {
     assertEquals("Foo", map.value("en"));
     assertEquals("Bar", map.value("fr"));
   }
-  
+
+  @Test
+  public void testLinkValue() {
+      ASObject obj1 = Makers.object().attachments("Foo").get();
+      ASObject obj2 = Makers.object().attachments("Foo").get();
+      assertEquals(obj1.attachments(), obj2.attachments());
+
+      ASObject obj3 = Makers.object().attachments("Foo", "Bar").get();
+      ASObject obj4 = Makers.object().attachments("Foo", "Bar").get();
+      assertEquals(obj3.attachments(), obj4.attachments());
+  }
+
   @Test
   public void testDateTimes() {
     DateTime now = DateTime.now();
