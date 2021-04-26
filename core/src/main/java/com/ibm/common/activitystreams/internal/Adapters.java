@@ -22,6 +22,7 @@
 package com.ibm.common.activitystreams.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Throwables.throwIfUnchecked;
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Iterables.size;
 
@@ -40,7 +41,6 @@ import org.joda.time.Period;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Range;
@@ -75,7 +75,7 @@ final class Adapters {
   static <E extends Enum<E>>EnumAdapter<E> forEnum(Class<E> _enumClass) {
     return new EnumAdapter<E>(_enumClass);
   }
-  
+
   /**
    * Method forEnum.
    * @param _enumClass Class<E>
@@ -85,25 +85,25 @@ final class Adapters {
   static <E extends Enum<E>>EnumAdapter<E> forEnum(Class<E> _enumClass, E or) {
     return new EnumAdapter<E>(_enumClass,or);
   }
-  
-  static final Adapter<com.ibm.common.activitystreams.NLV> NLV = 
+
+  static final Adapter<com.ibm.common.activitystreams.NLV> NLV =
     new NaturalLanguageValueAdapter();
-  
+
   static final Adapter<ActionsValue> ACTIONS =
     new AbstractDictionaryObjectAdapter
       <LinkValue,
        ActionsValue,
        ActionsValue.Builder>(LinkValue.class) {
     public JsonElement serialize(
-      ActionsValue actions, 
+      ActionsValue actions,
       Type type,
       JsonSerializationContext context) {
         JsonObject obj = new JsonObject();
         for (String verb : actions) {
-          Iterable<LinkValue> links = 
+          Iterable<LinkValue> links =
             actions.get(verb);
           obj.add(
-            verb, 
+            verb,
             context.serialize(
               size(links) == 1 ? // if there's only one, serialize just 1
                 getFirst(links,null) : // otherwise, serialize the list
@@ -117,12 +117,12 @@ final class Adapters {
       return actions();
     }
   };
-  
-  static final Adapter<Iterable<?>> ITERABLE = 
+
+  static final Adapter<Iterable<?>> ITERABLE =
     new Adapter<Iterable<?>>() {
 
       public JsonElement serialize(
-        Iterable<?> i, 
+        Iterable<?> i,
         Type type,
         JsonSerializationContext context) {
         JsonArray ary = new JsonArray();
@@ -135,10 +135,10 @@ final class Adapters {
           JsonDeserializationContext arg2) throws JsonParseException {
         return null; // handled elsewhere
       }
-    
+
   };
-  
-  static final Adapter<Date> DATE = 
+
+  static final Adapter<Date> DATE =
     new SimpleAdapter<Date>() {
       protected String serialize(Date t) {
         return ISODateTimeFormat.dateTime().print(new DateTime(t));
@@ -147,7 +147,7 @@ final class Adapters {
         return DateTime.parse(v).toDate();
       }
     };
-  
+
   static final Adapter<DateTime> DATETIME =
     new SimpleAdapter<DateTime>() {
       protected String serialize(DateTime t) {
@@ -157,8 +157,8 @@ final class Adapters {
         return DateTime.parse(v);
       }
     };
-  
-  static final Adapter<Duration> DURATION =  
+
+  static final Adapter<Duration> DURATION =
     new SimpleAdapter<Duration>() {
       public Duration apply(String v) {
         return Duration.parse(v);
@@ -178,7 +178,7 @@ final class Adapters {
         return Interval.parse(v);
       }
     };
-  
+
   static final Adapter<MediaType> MIMETYPE =
     new SimpleAdapter<MediaType>() {
       public MediaType apply(String v) {
@@ -186,15 +186,15 @@ final class Adapters {
       }
     };
 
-  static final MultimapAdapter MULTIMAP = 
+  static final MultimapAdapter MULTIMAP =
     new MultimapAdapter();
-  
 
-  static final Adapter<Range<?>> RANGE = 
+
+  static final Adapter<Range<?>> RANGE =
     new Adapter<Range<?>>() {
 
     public JsonElement serialize(
-      Range<?> src, 
+      Range<?> src,
       Type typeOfSrc,
       JsonSerializationContext context) {
       JsonObject el = new JsonObject();
@@ -202,10 +202,10 @@ final class Adapters {
       el.add("upper", makeBound(src.upperBoundType(),src.upperEndpoint(),context));
       return el;
     }
-    
+
     private JsonElement makeBound(
-      BoundType type, 
-      Object val, 
+      BoundType type,
+      Object val,
       JsonSerializationContext context) {
       JsonObject obj = new JsonObject();
       obj.add("type", context.serialize(type.name().toLowerCase()));
@@ -215,9 +215,9 @@ final class Adapters {
 
     @SuppressWarnings("rawtypes")
     public Range<?> deserialize(
-      JsonElement json, 
+      JsonElement json,
       Type typeOfT,
-      JsonDeserializationContext context) 
+      JsonDeserializationContext context)
         throws JsonParseException {
       checkArgument(json.isJsonObject());
       try {
@@ -230,10 +230,11 @@ final class Adapters {
         Object lb = des(lower.get("endpoint"),context);
         return Range.range((Comparable)lb, lbt, (Comparable)ub, ubt);
       } catch (Throwable t) {
-        throw Throwables.propagate(t);
+        throwIfUnchecked(t);
+        throw new RuntimeException(t);
       }
     }
-    
+
     private Object des(JsonElement val, JsonDeserializationContext context) {
       if (val.isJsonArray())
         return MultimapAdapter.arraydes(val.getAsJsonArray(), context);
@@ -241,14 +242,14 @@ final class Adapters {
         return context.deserialize(val, ASObject.class);
       else if (val.isJsonPrimitive()) {
         Object v = primConverter.convert(val.getAsJsonPrimitive());
-        if (v instanceof LazilyParsedNumber) 
+        if (v instanceof LazilyParsedNumber)
           v = new LazilyParsedNumberComparable((LazilyParsedNumber) v);
         return v;
       }
       else
         return null;
     }
-    
+
     private BoundType bt(JsonPrimitive p) {
       try {
         return BoundType.valueOf(p.toString());
@@ -257,32 +258,32 @@ final class Adapters {
       }
     }
   };
-  
+
   static final Adapter<Optional<?>> OPTIONAL =
     new Adapter<Optional<?>>() {
       public JsonElement serialize(
-        Optional<?> src, 
+        Optional<?> src,
         Type typeOfSrc,
         JsonSerializationContext context) {
           return context.serialize(src.orNull());
       }
       public Optional<?> deserialize(
-        JsonElement json, 
+        JsonElement json,
         Type typeOfT,
         JsonDeserializationContext context)
           throws JsonParseException {
         return null;
       }
   };
-  
-  static final Adapter<Table<?,?,?>> TABLE = 
+
+  static final Adapter<Table<?,?,?>> TABLE =
     new Adapter<Table<?,?,?>>() {
 
     public JsonElement serialize(
-      Table<?, ?, ?> src, 
+      Table<?, ?, ?> src,
       Type typeOfSrc,
       JsonSerializationContext context) {
-      
+
       JsonObject obj = new JsonObject();
       for (Table.Cell<?, ?, ?> cell : src.cellSet()) {
         String r = cell.getRowKey().toString();
@@ -298,16 +299,16 @@ final class Adapters {
         if (val != null)
           rowobj.add(c, context.serialize(val,val.getClass()));
       }
-      
+
       return obj;
     }
 
     public Table<?, ?, ?> deserialize(
-      JsonElement json, 
+      JsonElement json,
       Type typeOfT,
-      JsonDeserializationContext context) 
+      JsonDeserializationContext context)
         throws JsonParseException {
-      ImmutableTable.Builder<String,String,Object> table = 
+      ImmutableTable.Builder<String,String,Object> table =
         ImmutableTable.builder();
       checkArgument(json.isJsonObject());
       JsonObject obj = json.getAsJsonObject();

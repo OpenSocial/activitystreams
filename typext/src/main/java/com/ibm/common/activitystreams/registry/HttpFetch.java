@@ -1,9 +1,10 @@
 package com.ibm.common.activitystreams.registry;
 
-import static com.google.common.base.Throwables.propagate;
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
@@ -26,7 +27,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -40,95 +40,95 @@ import com.ibm.common.activitystreams.ext.ExtModule;
 public final class HttpFetch
   extends CacheLoader<String,ASObject> {
 
-  static final class Builder 
+  static final class Builder
     implements Supplier<HttpFetch> {
 
-    private final RegistryBuilder<ConnectionSocketFactory> csfr = 
+    private final RegistryBuilder<ConnectionSocketFactory> csfr =
       RegistryBuilder.<ConnectionSocketFactory>create()
         .register("http", PlainConnectionSocketFactory.INSTANCE);
     private ConnectionConfig defaultConnectionConfig;
     private SocketConfig defaultSocketConfig;
-    private final ImmutableMap.Builder<HttpHost,ConnectionConfig> connectionConfigs = 
+    private final ImmutableMap.Builder<HttpHost,ConnectionConfig> connectionConfigs =
       ImmutableMap.builder();
-    private final ImmutableMap.Builder<HttpHost,SocketConfig> socketConfigs = 
+    private final ImmutableMap.Builder<HttpHost,SocketConfig> socketConfigs =
       ImmutableMap.builder();
     private int maxConnectionsPerRoute = 2;
     private int maxConnections = 20;
-    private final ImmutableSet.Builder<Header> defaultHeaders = 
+    private final ImmutableSet.Builder<Header> defaultHeaders =
       ImmutableSet.builder();
     private String userAgent = null;
     private IO io = null;
-    private HttpClientBuilder builder = 
+    private HttpClientBuilder builder =
       HttpClients.custom();
-    
-    private final CacheBuilder<Object,Object> cache = 
+
+    private final CacheBuilder<Object,Object> cache =
       CacheBuilder.newBuilder()
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .expireAfterWrite(10, TimeUnit.MINUTES)
         .maximumSize(50)
         .initialCapacity(50);
     private HttpClientConnectionManager manager;
-    
+
     public Builder customizeCache(
       Receiver<CacheBuilder<Object,Object>> receiver) {
       if (receiver != null)
         receiver.receive(cache);
       return this;
     }
-    
+
     public Builder customizeClientBuilder(
       Receiver<HttpClientBuilder> receiver) {
         receiver.receive(builder);
         return this;
     }
-    
+
     public Builder io(IO io) {
       this.io = io;
       return this;
     }
-    
+
     public Builder useragent(String ua) {
       this.userAgent = ua;
       return this;
     }
-    
+
     public Builder defaultHeader(String name, String value) {
       defaultHeaders.add(new BasicHeader(name,value));
       return this;
     }
-    
+
     public Builder maxConnectionsPerRoute(int max) {
       this.maxConnectionsPerRoute = max;
       return this;
     }
-    
+
     public Builder maxConnections(int max) {
       this.maxConnections = max;
       return this;
     }
-    
+
     public Builder connectionConfig(ConnectionConfig config) {
       defaultConnectionConfig = config;
       return this;
     }
-    
+
     public Builder connectionConfig(HttpHost host, ConnectionConfig config) {
       connectionConfigs.put(host,config);
       return this;
     }
-    
+
     public Builder socketConfig(SocketConfig config) {
       defaultSocketConfig = config;
       return this;
     }
-    
+
     public Builder socketConfig(HttpHost host, SocketConfig config) {
       socketConfigs.put(host, config);
       return this;
     }
-    
+
     public Builder registerConnectionSocketFactory(
-      String id, 
+      String id,
       ConnectionSocketFactory csf) {
       csfr.register(id, csf);
       return this;
@@ -138,13 +138,13 @@ public final class HttpFetch
       this.manager = manager;
       return this;
     }
-    
+
     public HttpFetch get() {
       return new HttpFetch(this);
     }
-    
+
   }
-  
+
   private final LoadingCache<String,ASObject> cache;
   private final HttpClientConnectionManager manager;
   private final IO io;
@@ -156,23 +156,23 @@ public final class HttpFetch
     this.io = initIO(builder);
     this.client = initClient(builder);
   }
-  
+
   public void shutdown() {
     try {
       manager.shutdown();
     } catch (Throwable t) {}
   }
-  
+
   private IO initIO(Builder builder) {
     if (builder.io != null)
       return builder.io;
     return IO.makeDefault(ExtModule.instance);
   }
-  
+
   private CloseableHttpClient initClient(Builder builder) {
     HttpClientBuilder b = builder.builder;
     b.setConnectionManager(manager);
-    ImmutableSet<Header> headers = 
+    ImmutableSet<Header> headers =
       builder.defaultHeaders.build();
     if (!headers.isEmpty())
       b.setDefaultHeaders(headers);
@@ -180,11 +180,11 @@ public final class HttpFetch
       b.setUserAgent(builder.userAgent);
     return b.build();
   }
-  
+
   private HttpClientConnectionManager initManager(Builder builder) {
     if (builder.manager != null)
       return builder.manager;
-    PoolingHttpClientConnectionManager pm = 
+    PoolingHttpClientConnectionManager pm =
       new PoolingHttpClientConnectionManager(builder.csfr.build());
     for (Map.Entry<HttpHost,ConnectionConfig> entry : builder.connectionConfigs.build().entrySet())
       pm.setConnectionConfig(entry.getKey(), entry.getValue());
@@ -198,7 +198,7 @@ public final class HttpFetch
     pm.setMaxTotal(builder.maxConnections);
     return pm;
   }
-  
+
   private LoadingCache<String,ASObject> initCache(Builder builder) {
     return builder.cache.build(this);
   }
@@ -207,10 +207,11 @@ public final class HttpFetch
     try {
       return cache.get(uri);
     } catch (Throwable t) {
-      throw propagate(t);
+      throwIfUnchecked(t);
+      throw new RuntimeException(t);
     }
   }
-  
+
   @Override
   public ASObject load(String key) throws Exception {
     HttpContext context = new HttpClientContext();
@@ -222,7 +223,7 @@ public final class HttpFetch
       HttpEntity entity = resp.getEntity();
       if (entity != null) {
         // attempt parse
-        Optional<ASObject> parsed = 
+        Optional<ASObject> parsed =
           parse(entity.getContent());
         if (parsed.isPresent())
           return parsed.get();
@@ -230,12 +231,12 @@ public final class HttpFetch
     }
     throw new UncacheableResponseException();
   }
-  
+
   private Optional<ASObject> parse(InputStream in) {
     try {
-      return Optional.<ASObject>of(io.read(in));
+      return Optional.of(io.read(in));
     } catch (Throwable t) {
-      return Optional.<ASObject>absent();
+      return Optional.empty();
     }
   }
 }

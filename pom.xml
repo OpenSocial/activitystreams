@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ibm.common</groupId>
   <artifactId>activitystreams</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Activity Streams 2.0 Java Reference Implementation</name>
-  
+
   <developers>
     <developer>
       <id>jasnell</id>
@@ -20,7 +21,7 @@
       <timezone>-8</timezone>
     </developer>
   </developers>
-  
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -28,7 +29,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <organization>
     <name>IBM</name>
     <url>http://www.ibm.com</url>
@@ -37,11 +38,11 @@
     <developerConnection>scm:https://github.com/OpenSocial/incubator.git</developerConnection>
     <url>http://github.com/OpenSocial/activitystreams</url>
   </scm>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <modules>
     <module>core</module>
     <module>actions</module>
@@ -49,29 +50,29 @@
     <module>assembly</module>
     <module>legacy</module>
     <module>typext</module>
-  </modules>  
+  </modules>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
-        <version>2.2.4</version>
+        <version>2.8.6</version>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
-        <version>16.0.1</version>
+        <version>30.1.1-jre</version>
       </dependency>
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.3</version>
+        <version>2.10.10</version>
       </dependency>
       <!-- Test Dependencies -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.13</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -82,4 +83,20 @@
   <issueManagement>
     <url>https://github.com/OpenSocial/activitystreams/issues</url>
   </issueManagement>
+  <repositories>
+    <repository>
+      <id>nexusMirror</id>
+      <url>https://ips-repo.corp.exlservice.com/repository/maven-central/</url>
+    </repository>
+  </repositories>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>third-party-snapshots</id>
+      <url>https://ips-repo.corp.exlservice.com/repository/thirdparty/</url>
+    </snapshotRepository>
+    <repository>
+      <id>third-party</id>
+      <url>https://ips-repo.corp.exlservice.com/repository/thirdparty/</url>
+    </repository>
+  </distributionManagement>
 </project>

@@ -21,6 +21,7 @@
  */
 package com.ibm.common.activitystreams.internal;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
 import static com.google.gson.internal.bind.TypeAdapters.NUMBER;
 import static com.ibm.common.activitystreams.internal.Adapters.DATE;
 import static com.ibm.common.activitystreams.internal.Adapters.DATETIME;
@@ -53,7 +54,6 @@ import org.joda.time.ReadablePeriod;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
@@ -79,17 +79,17 @@ public final class GsonWrapper {
 
   /**
    * Method make.
-  
+
    * @return Builder */
   public static final Builder make() {
     return new Builder();
   }
-  
+
   /**
    * @author james
    * @version $Revision: 1.0 $
    */
-  public static final class Builder 
+  public static final class Builder
     implements Supplier<GsonWrapper> {
 
     private String charset = "UTF-8";
@@ -97,83 +97,83 @@ public final class GsonWrapper {
     private Schema schema = null; // default
     private ImmutableList.Builder<AdapterEntry<?>> adapters =
       ImmutableList.builder();
-    
+
     /**
      * Method charset.
      * @param charset String
-    
+
      * @return Builder */
     public Builder charset(String charset) {
       this.charset = charset;
       return this;
     }
-    
+
     /**
      * Method schema.
      * @param schema Schema
-    
+
      * @return Builder */
     public Builder schema(Schema schema) {
       this.schema = schema;
       return this;
     }
-    
+
     /**
      * Method adapter.
      * @param type Class<? extends T>
      * @param adapter Adapter<T>
-    
+
      * @return Builder */
     public <T>Builder adapter(
-      Class<? extends T> type, 
+      Class<? extends T> type,
       Adapter<T> adapter) {
         return adapter(type,adapter,false);
     }
-    
+
     /**
      * Method adapter.
      * @param type Class<? extends T>
      * @param adapter Adapter<T>
      * @param hier boolean
-    
+
      * @return Builder */
     public <T>Builder adapter(
-      Class<? extends T> type, 
-      Adapter<T> adapter, 
+      Class<? extends T> type,
+      Adapter<T> adapter,
       boolean hier) {
         adapters.add(new AdapterEntry<T>(type,adapter,hier));
         return this;
     }
-    
+
     /**
      * Method prettyPrint.
      * @param on boolean
-    
+
      * @return Builder */
     public Builder prettyPrint(boolean on) {
       this.pretty = on;
       return this;
     }
-    
+
     /**
      * Method prettyPrint.
-    
+
      * @return Builder */
     public Builder prettyPrint() {
       return prettyPrint(true);
     }
-    
+
     /**
      * Method get.
-    
-    
+
+
      * @return GsonWrapper * @see com.google.common.base.Supplier#get() */
     public GsonWrapper get() {
       return new GsonWrapper(this);
     }
-    
+
   }
-  
+
   /**
    * @author james
    * @version $Revision: 1.0 $
@@ -189,51 +189,51 @@ public final class GsonWrapper {
      * @param hier boolean
      */
     AdapterEntry(
-      Class<? extends T> type, 
-      Adapter<T> adapter, 
+      Class<? extends T> type,
+      Adapter<T> adapter,
       boolean hier) {
         this.type = type;
         this.adapter = adapter;
         this.hier = hier;
     }
   }
-  
+
   private final Gson gson;
   private final String charset;
-  
+
   /**
    * Constructor for GsonWrapper.
    * @param builder Builder
    */
   protected GsonWrapper(Builder builder) {
-    Schema schema = 
-      builder.schema != null ? 
-        builder.schema : 
+    Schema schema =
+      builder.schema != null ?
+        builder.schema :
         Schema.make().get();
-    ASObjectAdapter base = 
+    ASObjectAdapter base =
       new ASObjectAdapter(schema);
     GsonBuilder b = initGsonBuilder(
       builder,
       schema,
-      base, 
+      base,
       builder.adapters.build());
     if (builder.pretty)
       b.setPrettyPrinting();
     this.gson = b.create();
     this.charset = builder.charset;
   }
-  
+
   /**
    * Method initGsonBuilder.
    * @param builder Builder
-  
+
    * @return GsonBuilder */
   private static GsonBuilder initGsonBuilder(
-    Builder builder, 
-    Schema schema, 
+    Builder builder,
+    Schema schema,
     ASObjectAdapter base,
     Iterable<AdapterEntry<?>> adapters) {
-    
+
     GsonBuilder gson = new GsonBuilder()
     .registerTypeHierarchyAdapter(TypeValue.class, new TypeValueAdapter(schema))
     .registerTypeHierarchyAdapter(LinkValue.class, new LinkValueAdapter(schema))
@@ -252,32 +252,32 @@ public final class GsonWrapper {
     .registerTypeHierarchyAdapter(ReadablePeriod.class, PERIOD)
     .registerTypeHierarchyAdapter(ReadableInterval.class, INTERVAL)
     .registerTypeAdapter(
-      Activity.Status.class, 
+      Activity.Status.class,
       forEnum(
-        Activity.Status.class, 
+        Activity.Status.class,
         Activity.Status.OTHER))
     .registerTypeAdapter(Date.class, DATE)
     .registerTypeAdapter(DateTime.class, DATETIME)
     .registerTypeAdapter(MediaType.class, MIMETYPE)
     .registerTypeHierarchyAdapter(Multimap.class, MULTIMAP);
-    
+
     for (AdapterEntry<?> entry : adapters) {
       if (entry.hier)
         gson.registerTypeHierarchyAdapter(
-          entry.type, 
+          entry.type,
           entry.adapter!=null ?
             entry.adapter : base);
       else
         gson.registerTypeAdapter(
-          entry.type, 
-          entry.adapter!=null ? 
+          entry.type,
+          entry.adapter!=null ?
             entry.adapter:base);
     }
-    
+
     return gson;
 
   }
-  
+
   /**
    * Method write.
    * @param w Writable
@@ -285,15 +285,16 @@ public final class GsonWrapper {
    */
   public void write(Writable w, OutputStream out) {
     try {
-      OutputStreamWriter wout = 
+      OutputStreamWriter wout =
         new OutputStreamWriter(out, charset);
       gson.toJson(w,wout);
       wout.flush();
     } catch (Throwable t) {
-      throw Throwables.propagate(t);
+      throwIfUnchecked(t);
+      throw new RuntimeException(t);
     }
   }
-  
+
   /**
    * Method write.
    * @param w Writable
@@ -302,38 +303,39 @@ public final class GsonWrapper {
   public void write(Writable w, Writer out) {
     gson.toJson(w,out);
   }
-  
+
   /**
    * Method write.
    * @param w Writable
-  
+
    * @return String */
   public String write(Writable w) {
-    StringWriter sw = 
+    StringWriter sw =
       new StringWriter();
     write(w,sw);
     return sw.toString();
   }
-  
+
   /**
    * Method readAs.
    * @param in InputStream
    * @param type Class<? extends A>
-  
+
    * @return A */
   public <A extends ASObject>A readAs(InputStream in, Class<? extends A> type) {
     try {
       return readAs(new InputStreamReader(in, charset), type);
     } catch (Throwable t) {
-      throw Throwables.propagate(t);
+      throwIfUnchecked(t);
+      throw new RuntimeException(t);
     }
   }
-  
+
   /**
    * Method readAs.
    * @param in Reader
    * @param type Class<? extends A>
-  
+
    * @return A */
   public <A extends ASObject>A readAs(Reader in, Class<? extends A> type) {
     return (A)gson.fromJson(in, type);

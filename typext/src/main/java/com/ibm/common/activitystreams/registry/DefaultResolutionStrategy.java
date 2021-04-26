@@ -1,7 +1,7 @@
 package com.ibm.common.activitystreams.registry;
 
 import static com.google.common.util.concurrent.MoreExecutors.platformThreadFactory;
-import static com.google.common.base.Throwables.propagate;
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -14,36 +14,36 @@ import com.ibm.common.activitystreams.Collection;
 import com.ibm.common.activitystreams.Makers;
 import com.ibm.common.activitystreams.TypeValue;
 
-public final class DefaultResolutionStrategy 
+public final class DefaultResolutionStrategy
   extends CachingResolutionStrategy {
 
   public static Builder make() {
     return new Builder();
   }
-  
+
   public static DefaultResolutionStrategy makeDefault() {
     return make().get();
   }
-  
-  public static final class Builder 
+
+  public static final class Builder
     extends CachingResolutionStrategy.AbstractBuilder<DefaultResolutionStrategy, Builder> {
 
     private boolean proactive = false;
-    private final HttpFetch.Builder fetcherBuilder = 
+    private final HttpFetch.Builder fetcherBuilder =
       new HttpFetch.Builder();
-    private final ImmutableSet.Builder<String> proactiveTypes = 
+    private final ImmutableSet.Builder<String> proactiveTypes =
       ImmutableSet.<String>builder()
         .add("verb")
         .add("objectType");
-    
+
     public Builder customizeFetcher(Receiver<HttpFetch.Builder> receiver) {
-      if (receiver != null)  
+      if (receiver != null)
         receiver.receive(fetcherBuilder);
       return this;
     }
-    
+
     /**
-     * Tells the loader to proactively cache additional typevalue 
+     * Tells the loader to proactively cache additional typevalue
      * identifiers that happen to be discovered when attempting to
      * resolve a given typevalue.
      * @return
@@ -52,9 +52,9 @@ public final class DefaultResolutionStrategy
       this.proactive = true;
       return this;
     }
-    
+
     /**
-     * Specifies additional objectType identifiers to watch for when 
+     * Specifies additional objectType identifiers to watch for when
      * proactiveCaching is enabled.
      * @param typeValueId
      * @return
@@ -63,17 +63,17 @@ public final class DefaultResolutionStrategy
       proactiveTypes.add(typeValueId);
       return this;
     }
-    
+
     public DefaultResolutionStrategy get() {
       return new DefaultResolutionStrategy(this);
     }
-    
+
   }
-  
+
   private final boolean proactiveCaching;
   private final ImmutableSet<String> proactiveTypes;
   private final HttpFetch fetcher;
-  
+
   private DefaultResolutionStrategy(Builder builder) {
     super(builder);
     this.proactiveCaching = builder.proactive;
@@ -81,17 +81,17 @@ public final class DefaultResolutionStrategy
     this.fetcher = initFetcher(builder);
     ensureAlwaysShutdown(this);
   }
-  
+
   private HttpFetch initFetcher(Builder builder) {
     return builder.fetcherBuilder.get();
   }
-  
+
   @Override
   protected CacheLoader<TypeValue, TypeValue> loader() {
     return new DefaultCacheLoader();
   }
 
-  private final class DefaultCacheLoader 
+  private final class DefaultCacheLoader
     extends CacheLoader<TypeValue,TypeValue> {
 
     @Override
@@ -105,50 +105,53 @@ public final class DefaultResolutionStrategy
         case SIMPLE:
           String id = key.id();
           ASObject obj = fetcher.fetch(id); // attempt to fetch an object
-          ImmutableSet.Builder<TypeValue> additional = 
+          ImmutableSet.Builder<TypeValue> additional =
             ImmutableSet.builder();
           if (obj instanceof Collection) {
             Collection col = (Collection) obj;
-            ASObject matching = 
+            ASObject matching =
               processItems(
-                col.items(), 
-                id, 
-                proactiveCaching, 
-                proactiveTypes, 
+                col.items(),
+                id,
+                proactiveCaching,
+                proactiveTypes,
                 additional);
             if (matching != null)
               return matching;
           } else if (obj.has("items")) {
-            Iterable<ASObject> items = 
+            Iterable<ASObject> items =
               obj.<Iterable<ASObject>>get("items");
-            ASObject matching = 
+            ASObject matching =
               processItems(
-                items, 
-                id, 
-                proactiveCaching, 
-                proactiveTypes, 
+                items,
+                id,
+                proactiveCaching,
+                proactiveTypes,
                 additional);
             if (matching != null)
               return matching;
           } else if (Objects.equal(id, obj.id())) {
-            return obj; 
-          } 
+            return obj;
+          }
         default:
-          break;      
+          break;
         }
       } catch (Throwable t) {
         if (silentfail())
           return key;
-        else propagate(t);
+        else {
+          throwIfUnchecked(t);
+          throw new RuntimeException(t);
+        }
       }
       throw new UncacheableResponseException();
     }
   }
-  
+
   private ASObject processItems(
-    Iterable<ASObject> items, 
-    String lookingFor, 
-    boolean proactive, 
+    Iterable<ASObject> items,
+    String lookingFor,
+    boolean proactive,
     Set<String> proactiveTypes,
     ImmutableSet.Builder<TypeValue> additional) {
     ASObject matching = null;
@@ -164,7 +167,7 @@ public final class DefaultResolutionStrategy
           if (proactiveTypes.contains(otid)) {
             try {
               cache().get(
-                Makers.type(id), 
+                Makers.type(id),
                 new Callable<TypeValue>() {
                   public TypeValue call() throws Exception {
                     return obj;
@@ -180,7 +183,7 @@ public final class DefaultResolutionStrategy
 
   private static void ensureAlwaysShutdown(
     final ResolutionStrategy strategy) {
-      Thread shutdownThread = 
+      Thread shutdownThread =
         platformThreadFactory()
           .newThread(new Runnable() {
             public void run() {
