@@ -51,15 +51,15 @@ import com.ibm.common.activitystreams.TypeValue;
  * @author james
  * @version $Revision: 1.0 $
  */
-public class ASObjectAdapter 
+public class ASObjectAdapter
   extends Adapter<ASObject> {
 
   private final Schema schema;
-  
+
   protected Schema schema() {
     return schema;
   }
-  
+
   /**
    * Constructor for ASObjectAdapter.
    * @param schema Schema
@@ -67,43 +67,43 @@ public class ASObjectAdapter
   protected ASObjectAdapter(Schema schema) {
     this.schema = schema;
   }
-  
+
   /**
    * Method serialize.
    * @param obj ASObject
    * @param type Type
    * @param context JsonSerializationContext
-  
+
    * @return JsonElement */
   public final JsonElement serialize(
-    ASObject obj, 
+    ASObject obj,
     Type type,
     JsonSerializationContext context) {
-    JsonObject el = 
+    JsonObject el =
       new JsonObject();
     for (String key : obj) {
       Object val = obj.get(key);
       if (val != null) {
         el.add(
-          key, 
+          key,
           context.serialize(
-            val, 
+            val,
             val.getClass()));
       }
     }
     return el;
-    
+
   }
 
-  private static final ImmutableSet<? extends Type> knownTypes = 
+  private static final ImmutableSet<? extends Type> knownTypes =
     ImmutableSet.of(
       Collection.class,
       Activity.class);
-  
+
   protected boolean knowsType(Type type) {
     return knownTypes.contains(type);
   }
-  
+
   protected ASObject.AbstractBuilder<?,?> builderFor(Type type) {
     if (type == Collection.class)
       return collection();
@@ -111,49 +111,49 @@ public class ASObjectAdapter
       return activity();
     else return null;
   }
-  
+
   protected Model modelFor(Type type) {
     if (type == Collection.class)
       return schema.forObjectClassOrType(
-        Collection.Builder.class, 
+        Collection.Builder.class,
         "collection");
     else if (type == Activity.class)
       return schema.forObjectClassOrType(
-        Activity.Builder.class, 
+        Activity.Builder.class,
         "activity");
     else return null;
   }
-  
+
   /**
    * Method deserialize.
    * @param element JsonElement
    * @param type Type
    * @param context JsonDeserializationContext
-   * @return ASObject 
+   * @return ASObject
    * @throws JsonParseException
-   * @see com.google.gson.JsonDeserializer#deserialize(JsonElement, Type, JsonDeserializationContext) 
+   * @see com.google.gson.JsonDeserializer#deserialize(JsonElement, Type, JsonDeserializationContext)
    **/
   public final ASObject deserialize(
-    JsonElement element, 
+    JsonElement element,
     Type type,
-    JsonDeserializationContext context) 
+    JsonDeserializationContext context)
       throws JsonParseException {
-    
+
     JsonObject obj = (JsonObject)element;
     ASObject.AbstractBuilder<?,?> builder = null;
     Model propMap = null;
     TypeValue tv = null;
-    
+
     if (knowsType(type)) {
       builder = builderFor(type);
       propMap = modelFor(type);
     } else {
       if (obj.has("objectType")) {
         tv = context.deserialize(
-          obj.get("objectType"), 
+          obj.get("objectType"),
           TypeValue.class);
         @SuppressWarnings("rawtypes")
-        Class<? extends ASObject.AbstractBuilder> _class = 
+        Class<? extends ASObject.AbstractBuilder> _class =
           schema.builderForObjectTypeOrClass(tv.id(), (Class)type);
         if (_class != null) {
           propMap = schema.forObjectClassOrType(_class, tv.id());
@@ -162,7 +162,7 @@ public class ASObjectAdapter
               builder = _class.getConstructor(String.class).newInstance(tv.id());
             } catch (Throwable t) {
               try {
-                builder = _class.newInstance();
+                builder = _class.getDeclaredConstructor().newInstance();
                 builder.set("objectType", tv);
               } catch (Throwable t2) {
                 builder = Makers.object(tv);
@@ -176,9 +176,9 @@ public class ASObjectAdapter
             ASObject.Builder.class, tv.id());
         }
       } else {
-        if (obj.has("verb") && 
-            (obj.has("actor") || 
-             obj.has("object") || 
+        if (obj.has("verb") &&
+            (obj.has("actor") ||
+             obj.has("object") ||
              obj.has("target"))) {
            builder = activity();
            propMap = schema.forObjectClassOrType(
@@ -186,16 +186,16 @@ public class ASObjectAdapter
          } else if (obj.has("items")) {
            builder = collection();
            propMap = schema.forObjectClassOrType(
-             Collection.Builder.class, 
+             Collection.Builder.class,
              "collection");
          } else {
            @SuppressWarnings("rawtypes")
-          Class<? extends ASObject.AbstractBuilder> _class = 
+          Class<? extends ASObject.AbstractBuilder> _class =
              schema.builderFor((Class)type);
            if (_class != null) {
              if (!_class.isInterface()) {
                try {
-                 builder = _class.newInstance();
+                 builder = _class.getDeclaredConstructor().newInstance();
                } catch (Throwable t) {
                  builder = object();
                }
@@ -204,14 +204,14 @@ public class ASObjectAdapter
            if (builder == null)
              builder = object(); // anonymous
            propMap = schema.forObjectClass(builder.getClass());
-           propMap = propMap != null ? 
-             propMap : 
+           propMap = propMap != null ?
+             propMap :
              schema.forObjectClass(
                ASObject.Builder.class);
          }
       }
     }
-    
+
     for (Entry<String,JsonElement> entry : obj.entrySet()) {
       String name = entry.getKey();
       if (name.equalsIgnoreCase("objectType")) continue;
@@ -223,7 +223,7 @@ public class ASObjectAdapter
           _class != null ?
             context.deserialize(val,_class) :
             primConverter.convert(val.getAsJsonPrimitive()));
-      else if (val.isJsonArray()) { 
+      else if (val.isJsonArray()) {
         builder.set(
           name,
           LinkValue.class.isAssignableFrom(_class!=null?_class:Object.class) ?
@@ -235,17 +235,17 @@ public class ASObjectAdapter
               builder()));
       } else if (val.isJsonObject())
         builder.set(
-          name, 
-          context.deserialize(
-            val, 
-            propMap.has(name) ? 
+          name,
+          (Object) context.deserialize(
+            val,
+            propMap.has(name) ?
               propMap.get(name):
               ASObject.class));
     }
     return builder.get();
-    
+
   }
-  
+
   /**
    * Method convert.
    * @param arr JsonArray
@@ -255,8 +255,8 @@ public class ASObjectAdapter
    * @return ImmutableList<Object>
    */
   private ImmutableList<Object> convert(
-    JsonArray arr, 
-    Class<?> _class, 
+    JsonArray arr,
+    Class<?> _class,
     JsonDeserializationContext context,
     ImmutableList.Builder<Object> list) {
     processArray(arr, _class, context, list);
@@ -271,23 +271,23 @@ public class ASObjectAdapter
    * @param list ImmutableList.Builder<Object>
    */
   private void processArray(
-    JsonArray arr, 
-    Class<?> _class, 
-    JsonDeserializationContext context, 
+    JsonArray arr,
+    Class<?> _class,
+    JsonDeserializationContext context,
     ImmutableList.Builder<Object> list) {
     for (JsonElement mem : arr) {
       if (mem.isJsonPrimitive())
         list.add(
-          _class != null ? 
+          _class != null ?
             context.deserialize(mem,_class) :
             primConverter.convert(
               mem.getAsJsonPrimitive()));
       else if (mem.isJsonObject())
         list.add(
           context.deserialize(
-            mem, 
-            _class != null ? 
-              _class : 
+            mem,
+            _class != null ?
+              _class :
               ASObject.class));
       else if (mem.isJsonArray())
         list.add(
@@ -298,8 +298,8 @@ public class ASObjectAdapter
             builder()));
     }
   }
-  
-  public static final Converter<JsonPrimitive,Object> primConverter = 
+
+  public static final Converter<JsonPrimitive,Object> primConverter =
     new Converter<JsonPrimitive,Object>() {
       @Override
       protected JsonPrimitive doBackward(Object a) {
@@ -307,7 +307,7 @@ public class ASObjectAdapter
           return new JsonPrimitive((Boolean)a);
         else if (a instanceof Number)
           return new JsonPrimitive((Number)a);
-        else 
+        else
           return new JsonPrimitive(a.toString());
       }
       @Override
@@ -316,7 +316,7 @@ public class ASObjectAdapter
           return b.getAsBoolean();
         else if (b.isNumber())
           return b.getAsNumber();
-        else 
+        else
           return b.getAsString();
       }
   };

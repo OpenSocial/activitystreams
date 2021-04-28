@@ -28,7 +28,7 @@ import org.joda.time.ReadableDuration;
 import org.joda.time.ReadableInterval;
 import org.joda.time.ReadablePeriod;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -477,7 +477,7 @@ public final class Model {
   
    * @return String */
   public String toString() {
-    return Objects.toStringHelper(Model.class)
+    return MoreObjects.toStringHelper(Model.class)
       .omitNullValues()
       .add("Parent", parent)
       .add("Properties", properties)

@@ -21,7 +21,7 @@
  */
 
 package com.ibm.common.activitystreams.internal;
-import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.HashBiMap.create;
 import static com.google.common.collect.Iterables.addAll;

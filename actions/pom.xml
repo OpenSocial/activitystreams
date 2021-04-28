@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.ibm.common</groupId>
     <artifactId>activitystreams</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
   <artifactId>activitystreams-actions</artifactId>
   <name>Activity Streams 2.0 - Actions</name>
-  
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -15,12 +16,12 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
-    <build>
+
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -33,31 +34,43 @@
           <additionalparam>-XDignore.symbol.file</additionalparam>
           <show>public</show>
           <links>
-            <link>http://www.joda.org/joda-time/apidocs</link>
             <link>http://docs.guava-libraries.googlecode.com/git-history/v16.0.1/javadoc/</link>
           </links>
         </configuration>
       </plugin>
-      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
         <configuration>
-          <archive>  
+          <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive> 
+          </archive>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -78,13 +91,12 @@
             <Import-Package>
               com.ibm.common.activitystreams.*,
               com.google.gson.*,
-              com.google.common.*,
-              org.joda.time.*
+              com.google.common.*
             </Import-Package>
           </instructions>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -95,9 +107,9 @@
           </descriptors>
         </configuration>
       </plugin>
-      
+
     </plugins>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -117,7 +129,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -127,16 +139,16 @@
       </plugins>
     </pluginManagement>
   </build>
-  
-    <dependencies>
-      <dependency>
-        <groupId>com.ibm.common</groupId>
-        <artifactId>activitystreams-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-      </dependency>
-    </dependencies>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.ibm.common</groupId>
+      <artifactId>activitystreams-core</artifactId>
+      <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
 </project>

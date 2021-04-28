@@ -1,6 +1,6 @@
 package com.ibm.common.activitystreams.registry;
 
-import static com.google.common.base.Throwables.propagate;
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -13,16 +13,16 @@ import com.ibm.common.activitystreams.Makers;
 import com.ibm.common.activitystreams.TypeValue;
 import com.ibm.common.activitystreams.ValueType;
 
-public abstract class CachingResolutionStrategy 
+public abstract class CachingResolutionStrategy
   implements ResolutionStrategy {
 
   @SuppressWarnings("unchecked")
   public static abstract class AbstractBuilder
-    <C extends CachingResolutionStrategy, B extends AbstractBuilder<C,B>> 
+    <C extends CachingResolutionStrategy, B extends AbstractBuilder<C,B>>
     implements Supplier<C> {
 
     private boolean silentfail = false;
-    private final CacheBuilder<Object,Object> cache = 
+    private final CacheBuilder<Object,Object> cache =
       CacheBuilder.newBuilder()
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .expireAfterWrite(10, TimeUnit.MINUTES)
@@ -33,7 +33,7 @@ public abstract class CachingResolutionStrategy
       this.silentfail = true;
       return (B)this;
     }
-    
+
     public B customizeCache(Receiver<CacheBuilder<Object,Object>> receiver) {
       if (receiver != null)
         receiver.receive(cache);
@@ -41,42 +41,42 @@ public abstract class CachingResolutionStrategy
     }
 
   }
-  
+
   private final LoadingCache<TypeValue,TypeValue> cache;
   private final boolean silentfail;
-  
+
   protected LoadingCache<TypeValue,TypeValue> cache() {
     return cache;
   }
-  
+
   CachingResolutionStrategy(AbstractBuilder<?,?> builder) {
     this.cache = initCache(builder);
     this.silentfail = builder.silentfail;
   }
-  
+
   protected boolean silentfail() {
     return silentfail;
   }
-  
+
   private LoadingCache<TypeValue,TypeValue> initCache(AbstractBuilder<?,?> builder) {
     return builder.cache.build(loader());
   }
-  
+
   public Callable<TypeValue> resolverFor(TypeValue tv) {
     return new Resolver(tv);
   }
-  
+
   protected abstract CacheLoader<TypeValue,TypeValue> loader();
 
-  public final class Resolver 
+  public final class Resolver
     implements Callable<TypeValue> {
 
     private final TypeValue input;
-    
+
     Resolver(TypeValue input) {
       this.input = input;
     }
-    
+
     public TypeValue call() throws Exception {
       try {
         if (input == null) return null;
@@ -91,21 +91,24 @@ public abstract class CachingResolutionStrategy
       } catch (Throwable t) {
         if (silentfail())
           return input;
-        else throw propagate(t);
+        else {
+          throwIfUnchecked(t);
+          throw new RuntimeException(t);
+        }
       }
     }
-    
+
   }
 
   public Receiver<TypeValue> preloader() {
     return new CachePreloader(cache());
   }
- 
-  private static final class CachePreloader 
+
+  private static final class CachePreloader
     implements Receiver<TypeValue> {
-    
+
     private final LoadingCache<TypeValue,TypeValue> cache;
-    
+
     CachePreloader(LoadingCache<TypeValue,TypeValue> cache) {
       this.cache = cache;
     }
@@ -123,6 +126,6 @@ public abstract class CachingResolutionStrategy
         } catch (Throwable e) {}
       }
     }
-    
+
   }
 }
