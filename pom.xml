@@ -83,20 +83,4 @@
   <issueManagement>
     <url>https://github.com/OpenSocial/activitystreams/issues</url>
   </issueManagement>
-  <repositories>
-    <repository>
-      <id>nexusMirror</id>
-      <url>https://ips-repo.corp.exlservice.com/repository/maven-central/</url>
-    </repository>
-  </repositories>
-  <distributionManagement>
-    <snapshotRepository>
-      <id>third-party-snapshots</id>
-      <url>https://ips-repo.corp.exlservice.com/repository/thirdparty/</url>
-    </snapshotRepository>
-    <repository>
-      <id>third-party</id>
-      <url>https://ips-repo.corp.exlservice.com/repository/thirdparty/</url>
-    </repository>
-  </distributionManagement>
 </project>
