@@ -34,10 +34,12 @@
     <url>http://www.ibm.com</url>
   </organization>
   <scm>
-    <developerConnection>scm:https://github.com/OpenSocial/incubator.git</developerConnection>
-    <url>http://github.com/OpenSocial/activitystreams</url>
+    <connection>scm:git:https://github.com/percent-tcj-dd/activitystreams.git</connection>
+    <url>scm:git:https://github.com/percent-tcj-dd/activitystreams.git</url>
+    <developerConnection>scm:git:https://github.com/percent-tcj-dd/activitystreams.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -82,4 +84,12 @@
   <issueManagement>
     <url>https://github.com/OpenSocial/activitystreams/issues</url>
   </issueManagement>
+
+  <distributionManagement>
+    <repository>
+      <id>tcj</id>
+      <name>tcj</name>
+      <url>https://maven.pkg.github.com/percent-tcj-dd/maven-repo</url>
+    </repository>
+  </distributionManagement>
 </project>
