@@ -21,7 +21,7 @@
  */
 package com.ibm.common.activitystreams.internal;
 
-import static com.google.gson.internal.bind.TypeAdapters.NUMBER;
+import static com.google.gson.internal.bind.TypeAdapters.LAZILY_PARSED_NUMBER;
 import static com.ibm.common.activitystreams.internal.Adapters.DATE;
 import static com.ibm.common.activitystreams.internal.Adapters.DATETIME;
 import static com.ibm.common.activitystreams.internal.Adapters.NLV;
@@ -246,8 +246,8 @@ public final class GsonWrapper {
     .registerTypeHierarchyAdapter(Optional.class, OPTIONAL)
     .registerTypeHierarchyAdapter(Range.class, RANGE)
     .registerTypeHierarchyAdapter(Table.class, TABLE)
-    .registerTypeHierarchyAdapter(LazilyParsedNumber.class, NUMBER)
-    .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, NUMBER)
+    .registerTypeHierarchyAdapter(LazilyParsedNumber.class, LAZILY_PARSED_NUMBER)
+    .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, LAZILY_PARSED_NUMBER)
     .registerTypeHierarchyAdapter(ReadableDuration.class, DURATION)
     .registerTypeHierarchyAdapter(ReadablePeriod.class, PERIOD)
     .registerTypeHierarchyAdapter(ReadableInterval.class, INTERVAL)

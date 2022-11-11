@@ -163,7 +163,7 @@ public class ASObjectAdapter
               builder = _class.getConstructor(String.class).newInstance(tv.id());
             } catch (Throwable t) {
               try {
-                builder = _class.newInstance();
+                builder = _class.getDeclaredConstructor().newInstance();
                 builder.set("objectType", tv);
               } catch (Throwable t2) {
                 builder = Makers.object(tv);
@@ -196,7 +196,7 @@ public class ASObjectAdapter
            if (_class != null) {
              if (!_class.isInterface()) {
                try {
-                 builder = _class.newInstance();
+                 builder = _class.getDeclaredConstructor().newInstance();
                } catch (Throwable t) {
                  builder = object();
                }
