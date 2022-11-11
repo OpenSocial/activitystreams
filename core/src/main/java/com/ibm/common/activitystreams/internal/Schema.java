@@ -27,11 +27,11 @@ import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.MoreObjects;
-import org.joda.time.Duration;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Supplier;

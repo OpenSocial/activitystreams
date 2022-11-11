@@ -83,8 +83,7 @@
             <Import-Package>
               com.ibm.common.activitystreams.*,
               com.google.gson.*,
-              com.google.common.*,
-              org.joda.time.*
+              com.google.common.*
             </Import-Package>
           </instructions>
         </configuration>

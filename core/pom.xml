@@ -37,10 +37,6 @@
     	<groupId>com.google.guava</groupId>
     	<artifactId>guava</artifactId>
     </dependency>
-    <dependency>
-    	<groupId>joda-time</groupId>
-    	<artifactId>joda-time</artifactId>
-    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -106,8 +102,8 @@
             <Export-Package>com.ibm.common.activitystreams.*</Export-Package>
             <Import-Package>
               com.google.gson.*,
-              com.google.common.*,
-              org.joda.time.*
+              com.google.common.*
+<!--              org.joda.time.*-->
             </Import-Package>
           </instructions>
         </configuration>

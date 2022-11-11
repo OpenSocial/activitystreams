@@ -34,35 +34,20 @@ import static com.ibm.common.activitystreams.Makers.linkValue;
 import static com.ibm.common.activitystreams.Makers.linkValues;
 import static com.ibm.common.activitystreams.Makers.nlv;
 import static com.ibm.common.activitystreams.Makers.type;
-import static com.ibm.common.activitystreams.util.Converters.toBoolean;
-import static com.ibm.common.activitystreams.util.Converters.toDateTime;
-import static com.ibm.common.activitystreams.util.Converters.toDouble;
-import static com.ibm.common.activitystreams.util.Converters.toDuration;
-import static com.ibm.common.activitystreams.util.Converters.toFloat;
-import static com.ibm.common.activitystreams.util.Converters.toInt;
-import static com.ibm.common.activitystreams.util.Converters.toInterval;
-import static com.ibm.common.activitystreams.util.Converters.toLong;
-import static com.ibm.common.activitystreams.util.Converters.toPeriod;
-import static com.ibm.common.activitystreams.util.Converters.toShort;
+import static com.ibm.common.activitystreams.util.Converters.*;
 import static com.ibm.common.activitystreams.util.Util.DEFAULT_LOCALE;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
-import static org.joda.time.DateTimeZone.UTC;
-import static org.joda.time.Duration.standardSeconds;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Interval;
-import org.joda.time.Period;
-import org.joda.time.ReadableDuration;
-import org.joda.time.ReadablePeriod;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Function;
@@ -163,7 +148,7 @@ public class ASObject
      * @param dt DateTime
      * @return B 
      **/
-    protected B _dt(String key, DateTime dt) {
+    protected B _dt(String key, ZonedDateTime dt) {
       return set(key, dt);
     }
     
@@ -174,7 +159,7 @@ public class ASObject
      * @return B 
      **/
     protected B _dt(String key, String dt) {
-      return _dt(key, DateTime.parse(dt));
+      return _dt(key, ZonedDateTime.parse(dt));
     }
     
     /**
@@ -183,7 +168,7 @@ public class ASObject
      * @return B 
      **/
     protected B _dtNow(String key) {
-      return _dt(key, DateTime.now(UTC));
+      return _dt(key, ZonedDateTime.now(ZoneOffset.UTC));
     }
     
     /**
@@ -192,18 +177,8 @@ public class ASObject
      * @param duration Duration
      * @return B 
      **/
-    protected B _dtFromNow(String key, ReadableDuration duration) {
-      return _dt(key, DateTime.now(UTC).plus(duration));
-    }
-    
-    /**
-     * Method _dtFromNow.
-     * @param key String
-     * @param period ReadablePeriod
-     * @return B 
-     **/
-    protected B _dtFromNow(String key, ReadablePeriod period) {
-      return _dt(key, DateTime.now(UTC).plus(period));
+    protected B _dtFromNow(String key, Duration duration) {
+      return _dt(key, ZonedDateTime.now(ZoneOffset.UTC).plus(duration));
     }
     
     /**
@@ -224,21 +199,10 @@ public class ASObject
      * @param duration Duration
      * @return B 
      **/
-    protected B _dtFrom(String key, DateTime dt, ReadableDuration duration) {
+    protected B _dtFrom(String key, ZonedDateTime dt, Duration duration) {
       return _dt(key, dt.plus(duration));
     }
-    
-    /**
-     * Method _dtFrom.
-     * @param key String
-     * @param dt DateTime
-     * @param period ReadablePeriod
-     * @return B
-     */
-    protected B _dtFrom(String key, DateTime dt, ReadablePeriod period) {
-      return _dt(key, dt.plus(period));
-    }
-    
+
     /**
      * Method _dtFrom.
      * @param key String
@@ -247,7 +211,7 @@ public class ASObject
      * @param unit TimeUnit
      * @return B 
      **/
-    protected B _dtFrom(String key, DateTime dt, long v, TimeUnit unit) {
+    protected B _dtFrom(String key, ZonedDateTime dt, long v, TimeUnit unit) {
       return _dtFrom(key, dt, toDuration(v,unit));
     }
     
@@ -256,7 +220,7 @@ public class ASObject
      * @param dt DateTime
      * @return B 
      **/
-    public B published(DateTime dt) {
+    public B published(ZonedDateTime dt) {
       return _dt("published", dt);
     }
     
@@ -280,23 +244,8 @@ public class ASObject
      * @param duration Duration
      * @return B 
      **/
-    public B publishedFromNow(ReadableDuration duration) {
+    public B publishedFromNow(Duration duration) {
       return _dtFromNow("published", duration);
-    }
-    
-    /**
-     * Set the published timestamp as a given period of time from the current time
-     * <pre>
-     * // Published one day ago
-     * ASObject obj = Makers.object()
-     *   .publishedFromNow(Period.days(-1))
-     *   .get();
-     * <pre>
-     * @param period ReadablePeriod
-     * @return B 
-     **/
-    public B publishedFromNow(ReadablePeriod period) {
-      return _dtFromNow("published", period);
     }
     
     /**
@@ -314,7 +263,7 @@ public class ASObject
      * @param dt DateTime
      * @return B 
      **/
-    public B updated(DateTime dt) {
+    public B updated(ZonedDateTime dt) {
       return _dt("updated", dt);
     }
     
@@ -338,24 +287,8 @@ public class ASObject
      * @param duration Duration
      * @return B
      **/
-    public B updatedFromNow(ReadableDuration duration) {
+    public B updatedFromNow(Duration duration) {
       return _dtFromNow("updated", duration);
-    }
-    
-    /**
-     * Set the updated timestamp as a given period from the current time.
-     * For instance:
-     * <pre>
-     * // Published one day ago
-     * ASObject obj = Makers.object()
-     *   .updatedFromNow(Period.days(-1))
-     *   .get();
-     * <pre>
-     * @param period ReadablePeriod
-     * @return B
-     **/
-    public B updatedFromNow(ReadablePeriod period) {
-      return _dtFromNow("updated", period);
     }
     
     /**
@@ -373,7 +306,7 @@ public class ASObject
      * @param dt DateTime
      * @return B 
      **/
-    public B startTime(DateTime dt) {
+    public B startTime(ZonedDateTime dt) {
       return _dt("startTime", dt);
     }
     
@@ -389,24 +322,8 @@ public class ASObject
      * @param duration Duration
      * @return B 
      **/
-    public B startTimeFromNow(ReadableDuration duration) {
+    public B startTimeFromNow(Duration duration) {
       return _dtFromNow("startTime", duration);
-    }
-    
-    /**
-     * Set the startTime timestamp as a given period from the current time.
-     * For instance:
-     * <pre>
-     * // Published one day ago
-     * ASObject obj = Makers.object()
-     *   .startTimeFromNow(Period.days(-1))
-     *   .get();
-     * <pre>
-     * @param period ReadablePeriod
-     * @return B 
-     **/
-    public B startTimeFromNow(ReadablePeriod period) {
-      return _dtFromNow("startTime", period);
     }
     
     /**
@@ -432,7 +349,7 @@ public class ASObject
      * @param dt DateTime
      * @return B
      **/
-    public B endTime(DateTime dt) {
+    public B endTime(ZonedDateTime dt) {
       return _dt("endTime", dt);
     }
     
@@ -448,24 +365,8 @@ public class ASObject
      * @param duration Duration
      * @return B 
      **/
-    public B endTimeFromNow(ReadableDuration duration) {
+    public B endTimeFromNow(Duration duration) {
       return _dtFromNow("endTime", duration);
-    }
-    
-    /**
-     * Set the endTime timestamp as a given period from the current time.
-     * For instance:
-     * <pre>
-     * // Published one day ago
-     * ASObject obj = Makers.object()
-     *   .startTimeFromNow(Period.days(-1))
-     *   .get();
-     * <pre>
-     * @param period ReadablePeriod
-     * @return B
-     **/
-    public B endTimeFromNow(ReadablePeriod period) {
-      return _dtFromNow("endTime", period);
     }
     
     /**
@@ -505,7 +406,7 @@ public class ASObject
      *         is less than zero 
      **/
     public B duration(long s) {
-      return duration(standardSeconds(checkNotNegative(s)));
+      return duration(Duration.ofSeconds(checkNotNegative(s)));
     }
     
     /**
@@ -513,17 +414,8 @@ public class ASObject
      * @param d Duration
      * @return B 
      **/
-    public B duration(ReadableDuration d) {
+    public B duration(Duration d) {
       return set("duration", d);
-    }
-    
-    /**
-     * Set the duration as a Joda-Time Period
-     * @param period ReadablePeriod
-     * @return B
-     */
-    public B duration(ReadablePeriod period) {
-      return duration(period.toPeriod().toStandardDuration());
     }
     
     /**
@@ -534,25 +426,6 @@ public class ASObject
      **/
     public B duration(long v, TimeUnit unit) {
       return duration(toDuration(v,unit));
-    }
-    
-    /**
-     * Set the duration as a given period of time from the given reference
-     * @param p ReadablePeriod
-     * @param dt DateTime
-     * @return B
-     */
-    public B durationFrom(ReadablePeriod p, DateTime dt) {
-      return duration(p.toPeriod().toDurationFrom(dt));
-    }
-    
-    /**
-     * Set the duration as a given period of time from the current time
-     * @param p ReadablePeriod
-     * @return B
-     */
-    public B durationFromNow(ReadablePeriod p) {
-      return duration(p.toPeriod().toDurationFrom(DateTime.now(UTC)));
     }
     
     /**
@@ -1571,8 +1444,8 @@ public class ASObject
    * @param key String
    * @return DateTime
    */
-  public DateTime getDateTime(String key) {
-    return this.get(key,toDateTime,Optional.<DateTime>absent()).orNull();
+  public ZonedDateTime getDateTime(String key) {
+    return this.get(key,toDateTime,Optional.<ZonedDateTime>absent()).orNull();
   }
   
   /**
@@ -1618,25 +1491,7 @@ public class ASObject
   public Duration getDuration(String key) {
     return this.get(key, toDuration, Optional.<Duration>absent()).orNull();
   }
-  
-  /**
-   * Method getPeriod.
-   * @param key String
-   * @return Period
-   */
-  public Period getPeriod(String key) {
-    return this.get(key, toPeriod, Optional.<Period>absent()).orNull();
-  }
-  
-  /**
-   * Method getInterval.
-   * @param key String
-   * @return Interval
-   */
-  public Interval getInterval(String key) {
-    return this.get(key, toInterval, Optional.<Interval>absent()).orNull();
-  }
-  
+
   /**
    * Return the value of the property as a string if it exists or defaultValue if 
    * it does not. 
@@ -2444,7 +2299,7 @@ public class ASObject
   /**
    * Return the published timestamp for this object
    * @return DateTime */
-  public DateTime published() {
+  public ZonedDateTime published() {
     return this.getDateTime("published");
   }
   
@@ -2452,7 +2307,7 @@ public class ASObject
    * Return the updated timestamp for this object
    * @return DateTime 
    **/
-  public DateTime updated() {
+  public ZonedDateTime updated() {
     return this.getDateTime("updated");
   }
   
@@ -2460,7 +2315,7 @@ public class ASObject
    * Return the startTime timestamp for this object
    * @return DateTime 
    **/
-  public DateTime startTime() {
+  public ZonedDateTime startTime() {
     return this.getDateTime("startTime");
   }
   
@@ -2468,7 +2323,7 @@ public class ASObject
    * Return the endTime timestamp for this object
    * @return DateTime 
    **/
-  public DateTime endTime() {
+  public ZonedDateTime endTime() {
     return this.getDateTime("endTime");
   }
   

@@ -82,8 +82,7 @@
               com.ibm.common.activitystreams.*,
               com.google.gson.*,
               com.google.common.*,
-              org.joda.time.*,
-              org.apache.http.*,
+              org.apache.http.*
             </Import-Package>
           </instructions>
         </configuration>
