@@ -25,6 +25,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -75,7 +76,7 @@ public final class BoundingBox
   }
   
   public String toString() {
-    return Objects.toStringHelper(BoundingBox.class)
+    return MoreObjects.toStringHelper(BoundingBox.class)
       .addValue(bounds)
       .toString();
   }

@@ -23,6 +23,7 @@ package com.ibm.common.activitystreams.internal;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableDuration;
 import org.joda.time.ReadableInterval;
@@ -477,7 +478,7 @@ public final class Model {
   
    * @return String */
   public String toString() {
-    return Objects.toStringHelper(Model.class)
+    return MoreObjects.toStringHelper(Model.class)
       .omitNullValues()
       .add("Parent", parent)
       .add("Properties", properties)

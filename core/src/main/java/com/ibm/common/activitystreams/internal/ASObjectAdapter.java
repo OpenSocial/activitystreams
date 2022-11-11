@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
 import com.google.common.base.Converter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
@@ -235,12 +236,12 @@ public class ASObjectAdapter
               builder()));
       } else if (val.isJsonObject())
         builder.set(
-          name, 
-          context.deserialize(
-            val, 
-            propMap.has(name) ? 
-              propMap.get(name):
-              ASObject.class));
+          name,
+                (Supplier<?>) context.deserialize(
+                  val,
+                  propMap.has(name) ?
+                    propMap.get(name):
+                    ASObject.class));
     }
     return builder.get();
     
