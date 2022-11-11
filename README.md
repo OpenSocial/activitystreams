@@ -20,9 +20,9 @@ Use Maven to build.
 
 Dependencies:
 
-- gson 2.2.4
-- guava 16.0.1
-- joda-time 2.3
+- gson 2.10
+- guava 31.1-jre
+- joda-time 2.12.1
 
 ## Creating an Activity statement
 

@@ -21,17 +21,17 @@
  */
 
 package com.ibm.common.activitystreams.internal;
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.HashBiMap.create;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
-import org.joda.time.Duration;
+import com.google.common.base.MoreObjects;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Supplier;
@@ -333,7 +333,7 @@ public final class Schema {
   
    * @return String */
   public String toString() {
-    return toStringHelper(Schema.class)
+    return MoreObjects.toStringHelper(Schema.class)
       .add("Object Types", objectTypeMap)
       .add("Object Classes", objectClassMap)
       .toString();

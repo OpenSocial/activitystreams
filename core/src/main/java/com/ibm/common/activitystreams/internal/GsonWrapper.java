@@ -21,7 +21,7 @@
  */
 package com.ibm.common.activitystreams.internal;
 
-import static com.google.gson.internal.bind.TypeAdapters.NUMBER;
+import static com.google.gson.internal.bind.TypeAdapters.LAZILY_PARSED_NUMBER;
 import static com.ibm.common.activitystreams.internal.Adapters.DATE;
 import static com.ibm.common.activitystreams.internal.Adapters.DATETIME;
 import static com.ibm.common.activitystreams.internal.Adapters.NLV;
@@ -29,12 +29,10 @@ import static com.ibm.common.activitystreams.internal.Adapters.TABLE;
 import static com.ibm.common.activitystreams.internal.Adapters.OPTIONAL;
 import static com.ibm.common.activitystreams.internal.Adapters.ACTIONS;
 import static com.ibm.common.activitystreams.internal.Adapters.DURATION;
-import static com.ibm.common.activitystreams.internal.Adapters.INTERVAL;
 import static com.ibm.common.activitystreams.internal.Adapters.ITERABLE;
 import static com.ibm.common.activitystreams.internal.Adapters.MIMETYPE;
 import static com.ibm.common.activitystreams.internal.Adapters.MULTIMAP;
 import static com.ibm.common.activitystreams.internal.Adapters.RANGE;
-import static com.ibm.common.activitystreams.internal.Adapters.PERIOD;
 import static com.ibm.common.activitystreams.internal.Adapters.forEnum;
 
 import java.io.InputStream;
@@ -44,12 +42,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.Date;
-
-import org.joda.time.DateTime;
-import org.joda.time.ReadableDuration;
-import org.joda.time.ReadableInterval;
-import org.joda.time.ReadablePeriod;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
@@ -246,18 +241,16 @@ public final class GsonWrapper {
     .registerTypeHierarchyAdapter(Optional.class, OPTIONAL)
     .registerTypeHierarchyAdapter(Range.class, RANGE)
     .registerTypeHierarchyAdapter(Table.class, TABLE)
-    .registerTypeHierarchyAdapter(LazilyParsedNumber.class, NUMBER)
-    .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, NUMBER)
-    .registerTypeHierarchyAdapter(ReadableDuration.class, DURATION)
-    .registerTypeHierarchyAdapter(ReadablePeriod.class, PERIOD)
-    .registerTypeHierarchyAdapter(ReadableInterval.class, INTERVAL)
+    .registerTypeHierarchyAdapter(LazilyParsedNumber.class, LAZILY_PARSED_NUMBER)
+    .registerTypeHierarchyAdapter(LazilyParsedNumberComparable.class, LAZILY_PARSED_NUMBER)
+    .registerTypeHierarchyAdapter(Duration.class, DURATION)
     .registerTypeAdapter(
       Activity.Status.class, 
       forEnum(
         Activity.Status.class, 
         Activity.Status.OTHER))
     .registerTypeAdapter(Date.class, DATE)
-    .registerTypeAdapter(DateTime.class, DATETIME)
+    .registerTypeAdapter(ZonedDateTime.class, DATETIME)
     .registerTypeAdapter(MediaType.class, MIMETYPE)
     .registerTypeHierarchyAdapter(Multimap.class, MULTIMAP);
     

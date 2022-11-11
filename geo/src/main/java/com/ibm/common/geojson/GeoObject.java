@@ -24,6 +24,7 @@ package com.ibm.common.geojson;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 
@@ -212,7 +213,7 @@ public abstract class GeoObject<G extends GeoObject<G>>
   }
   
   public String toString() {
-    return Objects.toStringHelper(GeoObject.class)
+    return MoreObjects.toStringHelper(GeoObject.class)
       .add("type", type)
       .add("data", data)
       .toString();

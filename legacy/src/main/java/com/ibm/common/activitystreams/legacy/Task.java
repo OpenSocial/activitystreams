@@ -24,10 +24,8 @@ package com.ibm.common.activitystreams.legacy;
 import static com.google.common.collect.Iterables.transform;
 
 import java.io.ObjectStreamException;
-
-import org.joda.time.DateTime;
-import org.joda.time.ReadableDuration;
-import org.joda.time.ReadablePeriod;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -190,7 +188,7 @@ public class Task
      * @param dt DateTime
      * @return Builder
      */
-    public Builder by(DateTime dt) {
+    public Builder by(ZonedDateTime dt) {
       return this._dt("by", dt);
     }
     
@@ -208,18 +206,8 @@ public class Task
      * @param duration ReadableDuration
      * @return Builder
      */
-    public Builder byFromNow(ReadableDuration duration) {
+    public Builder byFromNow(Duration duration) {
       return this._dtFromNow("by", duration);
-    }
-    
-    /**
-     * Specifies the due date for this task in terms of a specific
-     * period of time from right now
-     * @param period ReadablePeriod
-     * @return Builder
-     */
-    public Builder byFromNow(ReadablePeriod period) {
-      return this._dtFromNow("by", period);
     }
     
     /**
@@ -229,19 +217,8 @@ public class Task
      * @param duration ReadableDuration
      * @return Builder
      */
-    public Builder by(DateTime dt, ReadableDuration duration) {
+    public Builder by(ZonedDateTime dt, Duration duration) {
       return this._dtFrom("by", dt, duration);
-    }
-    
-    /**
-     * Specifies the due date for this task in terms of a specific
-     * period of time from the given instant
-     * @param dt DateTime
-     * @param period ReadablePeriod
-     * @return Builder
-     */
-    public Builder by(DateTime dt, ReadablePeriod period) {
-      return this._dtFrom("by", dt, period);
     }
     
     /**
@@ -277,7 +254,7 @@ public class Task
    * Get the due date
    * @return DateTime
    */
-  public DateTime by() {
+  public ZonedDateTime by() {
     return getDateTime("by");
   }
   

@@ -24,7 +24,6 @@ package com.ibm.common.activitystreams.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.ibm.common.activitystreams.ASObject;
@@ -32,6 +31,8 @@ import com.ibm.common.activitystreams.Activity;
 import com.ibm.common.activitystreams.Collection;
 import com.ibm.common.activitystreams.IO;
 import com.ibm.common.activitystreams.internal.Schema;
+
+import java.time.ZonedDateTime;
 
 public final class TestIO {
 
@@ -73,6 +74,6 @@ public final class TestIO {
     ASObject obj = 
       io.read(
         "{\"objectType\":\"foo\",\"bar\":\"2013-12-12T12:12:12Z\"}");
-    assertTrue(obj.get("bar") instanceof DateTime);
+    assertTrue(obj.get("bar") instanceof ZonedDateTime);
   }
 }

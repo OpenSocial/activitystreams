@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -74,7 +75,7 @@ public final class CRS
   }
   
   public String toString() {
-    return Objects.toStringHelper(CRS.class)
+    return MoreObjects.toStringHelper(CRS.class)
       .addValue(type)
       .addValue(properties)
       .toString();
